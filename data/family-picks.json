@@ -1,0 +1,115 @@
+{
+  "updatedAt": "2026-06-01",
+  "sourceSheet": "https://docs.google.com/spreadsheets/d/1KQ4ngQsQNfWc6JvhdowFrLzomkDkjU7Ll6gzP2rxjlk/htmlview",
+  "members": ["Nathan", "Aria", "Haidong", "Andrea"],
+  "groups": [
+    {
+      "group": "A",
+      "picks": {
+        "Nathan": "Czechia",
+        "Aria": "Mexico",
+        "Haidong": "South Korea",
+        "Andrea": "South Africa"
+      }
+    },
+    {
+      "group": "B",
+      "picks": {
+        "Nathan": "Qatar",
+        "Aria": "Switzerland",
+        "Haidong": "Bosnia and Herzegovina",
+        "Andrea": "Canada"
+      }
+    },
+    {
+      "group": "C",
+      "picks": {
+        "Nathan": "Haiti",
+        "Aria": "Morocco",
+        "Haidong": "Brazil",
+        "Andrea": "Scotland"
+      }
+    },
+    {
+      "group": "D",
+      "picks": {
+        "Nathan": "Türkiye",
+        "Aria": "USA",
+        "Haidong": "Paraguay",
+        "Andrea": "Australia"
+      }
+    },
+    {
+      "group": "E",
+      "picks": {
+        "Nathan": "Ivory Coast",
+        "Aria": "Curaçao",
+        "Haidong": "Germany",
+        "Andrea": "Ecuador"
+      }
+    },
+    {
+      "group": "F",
+      "picks": {
+        "Nathan": "Tunisia",
+        "Aria": "Netherlands",
+        "Haidong": "Sweden",
+        "Andrea": "Japan"
+      }
+    },
+    {
+      "group": "G",
+      "picks": {
+        "Nathan": "Belgium",
+        "Aria": "New Zealand",
+        "Haidong": "Iran",
+        "Andrea": "Egypt"
+      }
+    },
+    {
+      "group": "H",
+      "picks": {
+        "Nathan": "Uruguay",
+        "Aria": "Saudi Arabia",
+        "Haidong": "Cape Verde",
+        "Andrea": "Spain"
+      }
+    },
+    {
+      "group": "I",
+      "picks": {
+        "Nathan": "Norway",
+        "Aria": "Iraq",
+        "Haidong": "Senegal",
+        "Andrea": "France"
+      }
+    },
+    {
+      "group": "J",
+      "picks": {
+        "Nathan": "Austria",
+        "Aria": "Jordan",
+        "Haidong": "Argentina",
+        "Andrea": "Algeria"
+      }
+    },
+    {
+      "group": "K",
+      "picks": {
+        "Nathan": "Portugal",
+        "Aria": "Uzbekistan",
+        "Haidong": "DR Congo",
+        "Andrea": "Colombia"
+      }
+    },
+    {
+      "group": "L",
+      "picks": {
+        "Nathan": "England",
+        "Aria": "Croatia",
+        "Haidong": "Panama",
+        "Andrea": "Ghana"
+      }
+    }
+  ]
+}
