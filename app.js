@@ -246,8 +246,9 @@ function renderPicksTable() {
               const team = group.picks[member];
               return `
                 <td>
-                  <div class="owner-pill owner-pill-flag" title="${team}" aria-label="${team}">
+                  <div class="owner-pill owner-pill-team" title="${team}" aria-label="${team}">
                     ${renderFlag(team)}
+                    <strong>${team}</strong>
                   </div>
                 </td>
               `;
@@ -377,8 +378,14 @@ function renderFixtures(events) {
     const heading = document.createElement('div');
     heading.className = 'fixture-date-heading';
     heading.innerHTML = `
-      <p class="section-label">${dateLabel.label}</p>
-      <h3>${dateLabel.subLabel}</h3>
+      <div class="fixture-date-badge">
+        <span class="fixture-date-month">${dateLabel.month}</span>
+        <strong class="fixture-date-day">${dateLabel.day}</strong>
+      </div>
+      <div class="fixture-date-copy">
+        <p class="section-label">${dateLabel.label}</p>
+        <h3>${dateLabel.subLabel}</h3>
+      </div>
     `;
     section.appendChild(heading);
 
@@ -475,12 +482,18 @@ function formatRefreshTime(date) {
 
 function formatEventDate(date) {
   return {
-    key: date.toISOString().slice(0, 10),
+    key: [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-'),
     label: new Intl.DateTimeFormat(undefined, {
       weekday: 'long',
     }).format(date),
     subLabel: new Intl.DateTimeFormat(undefined, {
       month: 'long',
+      day: 'numeric',
+    }).format(date),
+    month: new Intl.DateTimeFormat(undefined, {
+      month: 'short',
+    }).format(date),
+    day: new Intl.DateTimeFormat(undefined, {
       day: 'numeric',
     }).format(date),
   };
@@ -499,13 +512,15 @@ function groupEventsByDate(events) {
       grouped.set(dateLabel.key, {
         label: dateLabel.label,
         subLabel: dateLabel.subLabel,
+        month: dateLabel.month,
+        day: dateLabel.day,
         events: [event],
       });
     }
   }
 
   return [...grouped.values()].map((group) => [
-    { label: group.label, subLabel: group.subLabel },
+    { label: group.label, subLabel: group.subLabel, month: group.month, day: group.day },
     group.events,
   ]);
 }

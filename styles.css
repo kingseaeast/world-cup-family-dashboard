@@ -293,12 +293,13 @@ h1 {
   font-size: 0.95rem;
 }
 
-.owner-pill-flag {
+.owner-pill-team {
   align-items: center;
   justify-content: center;
-  min-width: 72px;
-  min-height: 56px;
-  padding: 8px;
+  min-width: 132px;
+  min-height: 76px;
+  padding: 10px 12px;
+  text-align: center;
 }
 
 .country-flag {
@@ -307,6 +308,7 @@ h1 {
   object-fit: cover;
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  margin-bottom: 6px;
 }
 
 .flag-fallback {
@@ -325,14 +327,43 @@ h1 {
 
 .fixture-date-heading {
   display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 12px;
+  align-items: center;
+  gap: 16px;
   padding-top: 4px;
+  margin-bottom: 4px;
 }
 
-.fixture-date-heading h3 {
-  font-size: 1.1rem;
+.fixture-date-badge {
+  min-width: 72px;
+  padding: 10px 12px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(125, 211, 252, 0.22), rgba(167, 139, 250, 0.18));
+  border: 1px solid rgba(125, 211, 252, 0.24);
+  text-align: center;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.fixture-date-month {
+  display: block;
+  color: var(--accent);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 2px;
+}
+
+.fixture-date-day {
+  display: block;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.fixture-date-copy h3 {
+  font-size: 1.35rem;
+}
+
+.fixture-date-copy .section-label {
+  margin-bottom: 4px;
 }
 
 .match-card {
