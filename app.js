@@ -63,6 +63,8 @@ const TEAM_FLAG_CODES = {
   uzbekistan: 'uz',
 };
 
+const DISPLAY_TIME_ZONE = 'America/Los_Angeles';
+
 const state = {
   memberFilter: 'All',
   statusFilter: 'all',
@@ -459,6 +461,7 @@ function formatEventTime(date, options = {}) {
   const { withDate = true } = options;
 
   return new Intl.DateTimeFormat(undefined, {
+    timeZone: DISPLAY_TIME_ZONE,
     ...(withDate
       ? {
           weekday: 'short',
@@ -473,6 +476,7 @@ function formatEventTime(date, options = {}) {
 
 function formatRefreshTime(date) {
   return new Intl.DateTimeFormat(undefined, {
+    timeZone: DISPLAY_TIME_ZONE,
     month: 'short',
     day: 'numeric',
     hour: 'numeric',
@@ -482,18 +486,27 @@ function formatRefreshTime(date) {
 
 function formatEventDate(date) {
   return {
-    key: [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-'),
+    key: new Intl.DateTimeFormat('en-CA', {
+      timeZone: DISPLAY_TIME_ZONE,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(date),
     label: new Intl.DateTimeFormat(undefined, {
+      timeZone: DISPLAY_TIME_ZONE,
       weekday: 'long',
     }).format(date),
     subLabel: new Intl.DateTimeFormat(undefined, {
+      timeZone: DISPLAY_TIME_ZONE,
       month: 'long',
       day: 'numeric',
     }).format(date),
     month: new Intl.DateTimeFormat(undefined, {
+      timeZone: DISPLAY_TIME_ZONE,
       month: 'short',
     }).format(date),
     day: new Intl.DateTimeFormat(undefined, {
+      timeZone: DISPLAY_TIME_ZONE,
       day: 'numeric',
     }).format(date),
   };
