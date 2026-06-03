@@ -65,6 +65,13 @@ const TEAM_FLAG_CODES = {
 
 const DISPLAY_TIME_ZONE = 'America/Los_Angeles';
 
+const MEMBER_THUMBNAILS = {
+  Nathan: './assets/family/nathan.jpg',
+  Aria: './assets/family/aria.jpg',
+  Andrea: './assets/family/andrea.jpg',
+  Haidong: './assets/family/haidong.jpg',
+};
+
 const state = {
   memberFilter: 'All',
   statusFilter: 'all',
@@ -308,8 +315,13 @@ function renderMemberSummary() {
 
       return `
         <article class="summary-card">
-          <p class="section-label">${member}</p>
-          <h3>${member} overview</h3>
+          <div class="summary-card-header">
+            ${renderMemberThumbnail(member, 'summary-avatar')}
+            <div>
+              <p class="section-label">${member}</p>
+              <h3>${member} overview</h3>
+            </div>
+          </div>
           <div class="stats">
             <div>
               <span class="muted">Teams</span>
@@ -348,16 +360,14 @@ function renderSpotlight(events) {
 
   els.spotlight.innerHTML = spotlightGames
     .map((event) => {
-      const family = [...event.home.owners, ...event.away.owners]
-        .map((owner) => `${owner.member} • ${owner.team}`)
-        .join(' · ');
+      const family = [...event.home.owners, ...event.away.owners];
 
       return `
         <article class="spotlight-card">
           <p class="section-label">${labelForEvent(event)}</p>
           <h3>${event.away.name} vs ${event.home.name}</h3>
           <p>${formatEventTime(event.date)} · ${event.venue}${event.city ? `, ${event.city}` : ''}</p>
-          <p>${family}</p>
+          <div class="owner-chip-row">${family.map((owner) => renderOwnerChip(owner)).join('')}</div>
         </article>
       `;
     })
@@ -455,6 +465,21 @@ function renderFlag(team) {
   }
 
   return `<img class="country-flag" src="https://flagcdn.com/h40/${flagCode}.png" alt="${team} flag" loading="lazy" />`;
+}
+
+function renderMemberThumbnail(member, className = 'member-avatar') {
+  const src = MEMBER_THUMBNAILS[member];
+  if (!src) return '';
+  return `<img class="${className}" src="${src}" alt="${member}" loading="lazy" />`;
+}
+
+function renderOwnerChip(owner) {
+  return `
+    <span class="owner-chip">
+      ${renderMemberThumbnail(owner.member, 'owner-avatar')}
+      <span>${owner.member} · <strong>${owner.team}</strong></span>
+    </span>
+  `;
 }
 
 function formatEventTime(date, options = {}) {
