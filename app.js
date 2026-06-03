@@ -405,7 +405,13 @@ function renderFixtures(events) {
         <div>${event.venue}${event.city ? `, ${event.city}` : ''}</div>
         <div>${event.statusDetail}</div>
       `;
-      node.querySelector('.interest-block').innerHTML = renderInterest(event);
+
+      const interestMarkup = renderInterest(event);
+      if (interestMarkup) {
+        node.querySelector('.interest-block').innerHTML = interestMarkup;
+      } else {
+        node.querySelector('.interest-block').remove();
+      }
 
       grid.appendChild(node);
     }
@@ -426,7 +432,7 @@ function renderTeamRows(event) {
           <img src="${team.logo}" alt="${team.name} logo" loading="lazy" />
           <div>
             <strong>${team.name}</strong>
-            <div class="team-subline">${team.owners.map((owner) => `${owner.member} (${owner.team})`).join(' · ')}</div>
+            <div class="team-subline">${team.owners.map((owner) => owner.member).join(' · ') || 'No family pick'}</div>
           </div>
           <span class="score">${event.completed || event.status === 'in' ? team.score : '—'}</span>
         </div>
@@ -435,14 +441,8 @@ function renderTeamRows(event) {
     .join('');
 }
 
-function renderInterest(event) {
-  return [event.away, event.home]
-    .flatMap((team) =>
-      team.owners.map(
-        (owner) => `<span class="family-tag">${owner.member}<strong>${owner.team}</strong></span>`,
-      ),
-    )
-    .join('');
+function renderInterest() {
+  return '';
 }
 
 function renderFlag(team) {
