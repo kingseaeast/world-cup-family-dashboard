@@ -11,6 +11,58 @@ const NAME_ALIASES = {
   curacao: 'curaçao',
 };
 
+const TEAM_FLAG_CODES = {
+  algeria: 'dz',
+  argentina: 'ar',
+  australia: 'au',
+  austria: 'at',
+  belgium: 'be',
+  brazil: 'br',
+  'bosnia and herzegovina': 'ba',
+  canada: 'ca',
+  'cape verde': 'cv',
+  colombia: 'co',
+  croatia: 'hr',
+  curaçao: 'cw',
+  czechia: 'cz',
+  'dr congo': 'cd',
+  ecuador: 'ec',
+  egypt: 'eg',
+  england: 'gb-eng',
+  france: 'fr',
+  germany: 'de',
+  ghana: 'gh',
+  haiti: 'ht',
+  iran: 'ir',
+  iraq: 'iq',
+  'ivory coast': 'ci',
+  japan: 'jp',
+  jordan: 'jo',
+  mexico: 'mx',
+  morocco: 'ma',
+  netherlands: 'nl',
+  'new zealand': 'nz',
+  norway: 'no',
+  panama: 'pa',
+  paraguay: 'py',
+  portugal: 'pt',
+  qatar: 'qa',
+  'saudi arabia': 'sa',
+  scotland: 'gb-sct',
+  senegal: 'sn',
+  'south africa': 'za',
+  'south korea': 'kr',
+  spain: 'es',
+  sweden: 'se',
+  switzerland: 'ch',
+  tunisia: 'tn',
+  türkiye: 'tr',
+  turkey: 'tr',
+  uruguay: 'uy',
+  usa: 'us',
+  uzbekistan: 'uz',
+};
+
 const state = {
   memberFilter: 'All',
   statusFilter: 'all',
@@ -194,9 +246,8 @@ function renderPicksTable() {
               const team = group.picks[member];
               return `
                 <td>
-                  <div class="owner-pill">
-                    <small>${member}</small>
-                    <strong>${team}</strong>
+                  <div class="owner-pill owner-pill-flag" title="${team}" aria-label="${team}">
+                    ${renderFlag(team)}
                   </div>
                 </td>
               `;
@@ -385,6 +436,16 @@ function renderInterest(event) {
       ),
     )
     .join('');
+}
+
+function renderFlag(team) {
+  const flagCode = TEAM_FLAG_CODES[team.trim().toLowerCase()];
+
+  if (!flagCode) {
+    return `<strong class="flag-fallback">${team}</strong>`;
+  }
+
+  return `<img class="country-flag" src="https://flagcdn.com/h40/${flagCode}.png" alt="${team} flag" loading="lazy" />`;
 }
 
 function formatEventTime(date, options = {}) {
