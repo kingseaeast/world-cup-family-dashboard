@@ -255,7 +255,7 @@ function renderMemberSummary() {
       return `
         <article class="summary-card">
           <p class="section-label">${member}</p>
-          <h3>${member}'s sweat index</h3>
+          <h3>${member} overview</h3>
           <div class="stats">
             <div>
               <span class="muted">Teams</span>
@@ -316,24 +316,44 @@ function renderFixtures(events) {
     return;
   }
 
+  const groups = groupEventsByDate(events);
   const fragment = document.createDocumentFragment();
 
-  for (const event of events) {
-    const node = els.template.content.firstElementChild.cloneNode(true);
-    const badge = node.querySelector('.status-badge');
-    badge.textContent = labelForEvent(event);
-    badge.classList.add(statusClass(event));
+  for (const [dateLabel, dateEvents] of groups) {
+    const section = document.createElement('section');
+    section.className = 'fixture-date-group';
 
-    node.querySelector('.match-stage').textContent = toTitleCase(event.stage);
-    node.querySelector('.teams').innerHTML = renderTeamRows(event);
-    node.querySelector('.match-meta').innerHTML = `
-      <div>${formatEventTime(event.date)}</div>
-      <div>${event.venue}${event.city ? `, ${event.city}` : ''}</div>
-      <div>${event.statusDetail}</div>
+    const heading = document.createElement('div');
+    heading.className = 'fixture-date-heading';
+    heading.innerHTML = `
+      <p class="section-label">${dateLabel.label}</p>
+      <h3>${dateLabel.subLabel}</h3>
     `;
-    node.querySelector('.interest-block').innerHTML = renderInterest(event);
+    section.appendChild(heading);
 
-    fragment.appendChild(node);
+    const grid = document.createElement('div');
+    grid.className = 'fixtures-grid';
+
+    for (const event of dateEvents) {
+      const node = els.template.content.firstElementChild.cloneNode(true);
+      const badge = node.querySelector('.status-badge');
+      badge.textContent = labelForEvent(event);
+      badge.classList.add(statusClass(event));
+
+      node.querySelector('.match-stage').textContent = toTitleCase(event.stage);
+      node.querySelector('.teams').innerHTML = renderTeamRows(event);
+      node.querySelector('.match-meta').innerHTML = `
+        <div>${formatEventTime(event.date, { withDate: false })}</div>
+        <div>${event.venue}${event.city ? `, ${event.city}` : ''}</div>
+        <div>${event.statusDetail}</div>
+      `;
+      node.querySelector('.interest-block').innerHTML = renderInterest(event);
+
+      grid.appendChild(node);
+    }
+
+    section.appendChild(grid);
+    fragment.appendChild(section);
   }
 
   els.fixtures.innerHTML = '';
@@ -367,11 +387,17 @@ function renderInterest(event) {
     .join('');
 }
 
-function formatEventTime(date) {
+function formatEventTime(date, options = {}) {
+  const { withDate = true } = options;
+
   return new Intl.DateTimeFormat(undefined, {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
+    ...(withDate
+      ? {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+        }
+      : {}),
     hour: 'numeric',
     minute: '2-digit',
   }).format(date);
@@ -384,6 +410,43 @@ function formatRefreshTime(date) {
     hour: 'numeric',
     minute: '2-digit',
   }).format(date);
+}
+
+function formatEventDate(date) {
+  return {
+    key: date.toISOString().slice(0, 10),
+    label: new Intl.DateTimeFormat(undefined, {
+      weekday: 'long',
+    }).format(date),
+    subLabel: new Intl.DateTimeFormat(undefined, {
+      month: 'long',
+      day: 'numeric',
+    }).format(date),
+  };
+}
+
+function groupEventsByDate(events) {
+  const grouped = new Map();
+
+  for (const event of events) {
+    const dateLabel = formatEventDate(event.date);
+    const current = grouped.get(dateLabel.key);
+
+    if (current) {
+      current.events.push(event);
+    } else {
+      grouped.set(dateLabel.key, {
+        label: dateLabel.label,
+        subLabel: dateLabel.subLabel,
+        events: [event],
+      });
+    }
+  }
+
+  return [...grouped.values()].map((group) => [
+    { label: group.label, subLabel: group.subLabel },
+    group.events,
+  ]);
 }
 
 function labelForEvent(event) {

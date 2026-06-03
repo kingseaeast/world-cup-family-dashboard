@@ -85,7 +85,8 @@ h1 {
 .hero-meta,
 .summary-grid,
 .spotlight-grid,
-.fixtures-grid {
+.fixtures-grid,
+.fixtures-groups {
   display: grid;
   gap: 16px;
 }
@@ -137,6 +138,12 @@ h1 {
   gap: 18px;
   grid-template-columns: 1fr 1fr auto;
   align-items: end;
+}
+
+.controls-panel-inline {
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
 }
 
 .chip-row {
@@ -220,6 +227,34 @@ h1 {
   line-height: 1.5;
 }
 
+.collapsible-panel {
+  padding: 0;
+  overflow: hidden;
+}
+
+.collapsible-summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding: 22px;
+}
+
+.collapsible-summary::-webkit-details-marker {
+  display: none;
+}
+
+.summary-hint {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.collapsible-content {
+  padding: 0 22px 22px;
+}
+
 .table-wrap {
   overflow-x: auto;
 }
@@ -260,6 +295,23 @@ h1 {
 
 .fixtures-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.fixture-date-group {
+  display: grid;
+  gap: 14px;
+}
+
+.fixture-date-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.fixture-date-heading h3 {
+  font-size: 1.1rem;
 }
 
 .match-card {
@@ -374,6 +426,12 @@ h1 {
   .spotlight-grid,
   .fixtures-grid {
     grid-template-columns: 1fr;
+  }
+
+  .collapsible-summary,
+  .fixture-date-heading {
+    align-items: start;
+    flex-direction: column;
   }
 }
 

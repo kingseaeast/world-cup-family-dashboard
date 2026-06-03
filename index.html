@@ -37,20 +37,6 @@
       </header>
 
       <main>
-        <section class="panel controls-panel">
-          <div>
-            <p class="section-label">Filter by family member</p>
-            <div id="member-filters" class="chip-row"></div>
-          </div>
-          <div>
-            <p class="section-label">Match status</p>
-            <div id="status-filters" class="chip-row"></div>
-          </div>
-          <div class="refresh-note">
-            <p id="data-status">Loading scoreboard…</p>
-          </div>
-        </section>
-
         <section class="summary-grid" id="member-summary"></section>
 
         <section class="panel">
@@ -63,19 +49,22 @@
           <div id="spotlight" class="spotlight-grid"></div>
         </section>
 
-        <section class="panel">
-          <div class="section-heading">
-            <div>
-              <p class="section-label">All picks</p>
-              <h2>Group selections</h2>
+        <section class="panel collapsible-panel">
+          <details id="all-picks-details">
+            <summary class="collapsible-summary">
+              <div>
+                <p class="section-label">All picks</p>
+                <h2>Group selections</h2>
+              </div>
+              <span class="summary-hint">Click to expand</span>
+            </summary>
+            <div class="table-wrap collapsible-content">
+              <table id="picks-table">
+                <thead></thead>
+                <tbody></tbody>
+              </table>
             </div>
-          </div>
-          <div class="table-wrap">
-            <table id="picks-table">
-              <thead></thead>
-              <tbody></tbody>
-            </table>
-          </div>
+          </details>
         </section>
 
         <section class="panel">
@@ -86,7 +75,20 @@
             </div>
             <p id="fixtures-count" class="fixtures-count"></p>
           </div>
-          <div id="fixtures" class="fixtures-grid"></div>
+          <div class="controls-panel controls-panel-inline">
+            <div>
+              <p class="section-label">Filter by family member</p>
+              <div id="member-filters" class="chip-row"></div>
+            </div>
+            <div>
+              <p class="section-label">Match status</p>
+              <div id="status-filters" class="chip-row"></div>
+            </div>
+            <div class="refresh-note">
+              <p id="data-status">Loading scoreboard…</p>
+            </div>
+          </div>
+          <div id="fixtures" class="fixtures-groups"></div>
         </section>
       </main>
     </div>
