@@ -546,28 +546,72 @@ function renderMemberSummary() {
 function renderSpotlight(events) {
   const spotlightGames = [...events]
     .filter((event) => state.statusFilter !== 'completed' ? !event.completed : true)
+    .filter((event) => [...event.home.owners, ...event.away.owners].length)
     .sort((a, b) => scoreEvent(a) - scoreEvent(b))
     .slice(0, 3);
 
   if (!spotlightGames.length) {
-    els.spotlight.innerHTML = '<div class="spotlight-card"><p>No matches in this filter yet.</p></div>';
+    els.spotlight.innerHTML = '<div class="spotlight-card spotlight-empty"><p>No matches in this filter yet.</p></div>';
     return;
   }
 
   els.spotlight.innerHTML = spotlightGames
-    .map((event) => {
+    .map((event, index) => {
       const family = [...event.home.owners, ...event.away.owners];
+      const time = formatSpotlightTime(event.date);
 
       return `
-        <article class="spotlight-card">
-          <p class="section-label">${labelForEvent(event)}</p>
-          <h3>${event.away.name} vs ${event.home.name}</h3>
-          <p>${formatEventTime(event.date)} · ${event.venue}${event.city ? `, ${event.city}` : ''}</p>
-          <div class="owner-chip-row">${family.map((owner) => renderOwnerChip(owner)).join('')}</div>
+        <article class="spotlight-card ${index === 0 ? 'spotlight-card-next' : ''}">
+          <div class="spotlight-time">
+            <div>
+              <span class="spotlight-kicker">${event.status === 'in' ? 'Live now' : event.completed ? 'Final' : index === 0 ? 'Next up' : time.relativeDay}</span>
+              <strong>${time.clock}</strong>
+            </div>
+            <div class="spotlight-date">
+              <strong>${time.weekday}</strong>
+              <span>${time.date}</span>
+            </div>
+          </div>
+
+          <div class="spotlight-matchup">
+            ${renderSpotlightTeam(event.away)}
+            <span class="spotlight-vs">vs</span>
+            ${renderSpotlightTeam(event.home)}
+          </div>
+
+          <div class="spotlight-family">
+            <p>Family involved</p>
+            <div class="spotlight-family-list">
+              ${family.map((owner) => renderSpotlightOwner(owner)).join('')}
+            </div>
+          </div>
+
+          <p class="spotlight-venue">${event.venue}${event.city ? ` · ${event.city}` : ''}</p>
         </article>
       `;
     })
     .join('');
+}
+
+function renderSpotlightTeam(team) {
+  return `
+    <div class="spotlight-team">
+      <img src="${team.logo}" alt="${team.name} logo" loading="lazy" />
+      <strong>${team.name}</strong>
+    </div>
+  `;
+}
+
+function renderSpotlightOwner(owner) {
+  return `
+    <div class="spotlight-owner">
+      ${renderMemberThumbnail(owner.member, 'spotlight-owner-avatar')}
+      <span>
+        <strong>${owner.member}</strong>
+        <small>${owner.team}</small>
+      </span>
+    </div>
+  `;
 }
 
 function renderFixtures(events) {
@@ -669,15 +713,6 @@ function renderMemberThumbnail(member, className = 'member-avatar') {
   return `<img class="${className}" src="${src}" alt="${member}" loading="lazy" />`;
 }
 
-function renderOwnerChip(owner) {
-  return `
-    <span class="owner-chip">
-      ${renderMemberThumbnail(owner.member, 'owner-avatar')}
-      <span>${owner.member} · <strong>${owner.team}</strong></span>
-    </span>
-  `;
-}
-
 function formatEventTime(date, options = {}) {
   const { withDate = true } = options;
 
@@ -693,6 +728,41 @@ function formatEventTime(date, options = {}) {
     hour: 'numeric',
     minute: '2-digit',
   }).format(date);
+}
+
+function formatSpotlightTime(date) {
+  const eventKey = formatEventDate(date).key;
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  const relativeDay =
+    eventKey === formatEventDate(today).key
+      ? 'Today'
+      : eventKey === formatEventDate(tomorrow).key
+        ? 'Tomorrow'
+        : new Intl.DateTimeFormat(undefined, {
+            timeZone: DISPLAY_TIME_ZONE,
+            weekday: 'long',
+          }).format(date);
+
+  return {
+    relativeDay,
+    weekday: new Intl.DateTimeFormat(undefined, {
+      timeZone: DISPLAY_TIME_ZONE,
+      weekday: 'short',
+    }).format(date),
+    date: new Intl.DateTimeFormat(undefined, {
+      timeZone: DISPLAY_TIME_ZONE,
+      month: 'short',
+      day: 'numeric',
+    }).format(date),
+    clock: `${new Intl.DateTimeFormat(undefined, {
+      timeZone: DISPLAY_TIME_ZONE,
+      hour: 'numeric',
+      minute: '2-digit',
+    }).format(date)} PT`,
+  };
 }
 
 function formatRefreshTime(date) {
