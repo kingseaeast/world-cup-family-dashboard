@@ -90,6 +90,8 @@ const els = {
   memberSummary: document.querySelector('#member-summary'),
   standingsHead: document.querySelector('#standings-table thead'),
   standingsBody: document.querySelector('#standings-table tbody'),
+  teamStandingsHead: document.querySelector('#team-standings-table thead'),
+  teamStandingsBody: document.querySelector('#team-standings-table tbody'),
   picksHead: document.querySelector('#picks-table thead'),
   picksBody: document.querySelector('#picks-table tbody'),
   spotlight: document.querySelector('#spotlight'),
@@ -286,6 +288,7 @@ function render() {
 
   renderMemberSummary();
   renderStandings();
+  renderTeamStandings();
   renderSpotlight(events);
   renderFixtures(events);
 }
@@ -293,13 +296,7 @@ function render() {
 function renderStandings() {
   const standings = state.members
     .map((member) => calculateMemberStanding(member))
-    .sort(
-      (a, b) =>
-        b.points - a.points ||
-        b.goalDifference - a.goalDifference ||
-        b.goalsFor - a.goalsFor ||
-        a.member.localeCompare(b.member),
-    );
+    .sort(compareStandings);
 
   els.standingsHead.innerHTML = `
     <tr>
@@ -338,17 +335,7 @@ function renderStandings() {
 }
 
 function calculateMemberStanding(member) {
-  const standing = {
-    member,
-    played: 0,
-    wins: 0,
-    draws: 0,
-    losses: 0,
-    goalsFor: 0,
-    goalsAgainst: 0,
-    goalDifference: 0,
-    points: 0,
-  };
+  const standing = createStanding({ member });
 
   for (const event of state.events.filter((item) => item.completed)) {
     const memberOwnsHome = event.home.owners.some((owner) => owner.member === member);
@@ -361,24 +348,115 @@ function calculateMemberStanding(member) {
       const ownsTeam = team === event.home ? memberOwnsHome : memberOwnsAway;
       if (!ownsTeam) continue;
 
-      standing.played += 1;
-      standing.goalsFor += Number(team.score) || 0;
-      standing.goalsAgainst += Number(opponent.score) || 0;
-
-      if (team.winner) {
-        standing.wins += 1;
-        standing.points += 3;
-      } else if (opponent.winner) {
-        standing.losses += 1;
-      } else {
-        standing.draws += 1;
-        standing.points += 1;
-      }
+      recordResult(standing, team, opponent);
     }
   }
 
-  standing.goalDifference = standing.goalsFor - standing.goalsAgainst;
   return standing;
+}
+
+function renderTeamStandings() {
+  const standings = calculateTeamStandings();
+
+  els.teamStandingsHead.innerHTML = `
+    <tr>
+      <th scope="col">Rank</th>
+      <th scope="col">Team</th>
+      <th scope="col">Family owner</th>
+      <th scope="col" title="Played">P</th>
+      <th scope="col" title="Wins">W</th>
+      <th scope="col" title="Draws">D</th>
+      <th scope="col" title="Losses">L</th>
+      <th scope="col" title="Goal difference">GD</th>
+      <th scope="col" title="Points">Pts</th>
+    </tr>
+  `;
+
+  els.teamStandingsBody.innerHTML = standings
+    .map(
+      (standing, index) => `
+        <tr>
+          <td><strong class="standing-rank">${index + 1}</strong></td>
+          <td>
+            <div class="standing-member">
+              <img class="standing-team-logo" src="${standing.logo}" alt="${standing.team} logo" loading="lazy" />
+              <strong>${standing.team}</strong>
+            </div>
+          </td>
+          <td>${standing.owners.map((owner) => owner.member).join(' · ') || '—'}</td>
+          <td>${standing.played}</td>
+          <td>${standing.wins}</td>
+          <td>${standing.draws}</td>
+          <td>${standing.losses}</td>
+          <td>${formatGoalDifference(standing.goalDifference)}</td>
+          <td><strong class="standing-points">${standing.points}</strong></td>
+        </tr>
+      `,
+    )
+    .join('');
+}
+
+function calculateTeamStandings() {
+  const standings = new Map();
+
+  for (const event of state.events) {
+    for (const team of [event.home, event.away]) {
+      if (team.owners.length && !standings.has(team.name)) {
+        standings.set(team.name, createStanding({ team: team.name, logo: team.logo, owners: team.owners }));
+      }
+    }
+
+    if (!event.completed) continue;
+
+    if (standings.has(event.home.name)) {
+      recordResult(standings.get(event.home.name), event.home, event.away);
+    }
+    if (standings.has(event.away.name)) {
+      recordResult(standings.get(event.away.name), event.away, event.home);
+    }
+  }
+
+  return [...standings.values()].sort(compareStandings);
+}
+
+function createStanding(identity) {
+  return {
+    ...identity,
+    played: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    goalDifference: 0,
+    points: 0,
+  };
+}
+
+function recordResult(standing, team, opponent) {
+  standing.played += 1;
+  standing.goalsFor += Number(team.score) || 0;
+  standing.goalsAgainst += Number(opponent.score) || 0;
+  standing.goalDifference = standing.goalsFor - standing.goalsAgainst;
+
+  if (team.winner) {
+    standing.wins += 1;
+    standing.points += 3;
+  } else if (opponent.winner) {
+    standing.losses += 1;
+  } else {
+    standing.draws += 1;
+    standing.points += 1;
+  }
+}
+
+function compareStandings(a, b) {
+  return (
+    b.points - a.points ||
+    b.goalDifference - a.goalDifference ||
+    b.goalsFor - a.goalsFor ||
+    (a.member ?? a.team).localeCompare(b.member ?? b.team)
+  );
 }
 
 function formatGoalDifference(value) {
