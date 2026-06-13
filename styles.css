@@ -300,24 +300,55 @@ h1 {
   overflow-x: auto;
 }
 
-#picks-table {
+#picks-table,
+#standings-table {
   width: 100%;
   border-collapse: collapse;
 }
 
 #picks-table th,
-#picks-table td {
+#picks-table td,
+#standings-table th,
+#standings-table td {
   text-align: left;
   padding: 14px 12px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.12);
   vertical-align: top;
 }
 
-#picks-table thead th {
+#picks-table thead th,
+#standings-table thead th {
   color: var(--accent);
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+.standing-member {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 140px;
+}
+
+.standing-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 1px solid rgba(125, 211, 252, 0.22);
+}
+
+.standing-rank,
+.standing-points {
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+.standings-note {
+  color: var(--muted);
+  font-size: 0.86rem;
+  margin-top: 14px;
 }
 
 .owner-pill {

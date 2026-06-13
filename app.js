@@ -88,6 +88,8 @@ const els = {
   memberFilters: document.querySelector('#member-filters'),
   statusFilters: document.querySelector('#status-filters'),
   memberSummary: document.querySelector('#member-summary'),
+  standingsHead: document.querySelector('#standings-table thead'),
+  standingsBody: document.querySelector('#standings-table tbody'),
   picksHead: document.querySelector('#picks-table thead'),
   picksBody: document.querySelector('#picks-table tbody'),
   spotlight: document.querySelector('#spotlight'),
@@ -283,8 +285,104 @@ function render() {
   els.dataStatus.textContent = `ESPN schedule/results • refreshed ${formatRefreshTime(state.loadedAt)}`;
 
   renderMemberSummary();
+  renderStandings();
   renderSpotlight(events);
   renderFixtures(events);
+}
+
+function renderStandings() {
+  const standings = state.members
+    .map((member) => calculateMemberStanding(member))
+    .sort(
+      (a, b) =>
+        b.points - a.points ||
+        b.goalDifference - a.goalDifference ||
+        b.goalsFor - a.goalsFor ||
+        a.member.localeCompare(b.member),
+    );
+
+  els.standingsHead.innerHTML = `
+    <tr>
+      <th scope="col">Rank</th>
+      <th scope="col">Family member</th>
+      <th scope="col" title="Played">P</th>
+      <th scope="col" title="Wins">W</th>
+      <th scope="col" title="Draws">D</th>
+      <th scope="col" title="Losses">L</th>
+      <th scope="col" title="Goal difference">GD</th>
+      <th scope="col" title="Points">Pts</th>
+    </tr>
+  `;
+
+  els.standingsBody.innerHTML = standings
+    .map(
+      (standing, index) => `
+        <tr>
+          <td><strong class="standing-rank">${index + 1}</strong></td>
+          <td>
+            <div class="standing-member">
+              ${renderMemberThumbnail(standing.member, 'standing-avatar')}
+              <strong>${standing.member}</strong>
+            </div>
+          </td>
+          <td>${standing.played}</td>
+          <td>${standing.wins}</td>
+          <td>${standing.draws}</td>
+          <td>${standing.losses}</td>
+          <td>${formatGoalDifference(standing.goalDifference)}</td>
+          <td><strong class="standing-points">${standing.points}</strong></td>
+        </tr>
+      `,
+    )
+    .join('');
+}
+
+function calculateMemberStanding(member) {
+  const standing = {
+    member,
+    played: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    goalDifference: 0,
+    points: 0,
+  };
+
+  for (const event of state.events.filter((item) => item.completed)) {
+    const memberOwnsHome = event.home.owners.some((owner) => owner.member === member);
+    const memberOwnsAway = event.away.owners.some((owner) => owner.member === member);
+
+    for (const [team, opponent] of [
+      [event.home, event.away],
+      [event.away, event.home],
+    ]) {
+      const ownsTeam = team === event.home ? memberOwnsHome : memberOwnsAway;
+      if (!ownsTeam) continue;
+
+      standing.played += 1;
+      standing.goalsFor += Number(team.score) || 0;
+      standing.goalsAgainst += Number(opponent.score) || 0;
+
+      if (team.winner) {
+        standing.wins += 1;
+        standing.points += 3;
+      } else if (opponent.winner) {
+        standing.losses += 1;
+      } else {
+        standing.draws += 1;
+        standing.points += 1;
+      }
+    }
+  }
+
+  standing.goalDifference = standing.goalsFor - standing.goalsAgainst;
+  return standing;
+}
+
+function formatGoalDifference(value) {
+  return value > 0 ? `+${value}` : String(value);
 }
 
 function getFilteredEvents() {
