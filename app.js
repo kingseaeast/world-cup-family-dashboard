@@ -368,6 +368,7 @@ function renderTeamStandings() {
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col">Team</th>
+                  <th scope="col">Family member</th>
                   <th scope="col" title="Played">P</th>
                   <th scope="col" title="Goal difference">GD</th>
                   <th scope="col" title="Points">Pts</th>
@@ -382,12 +383,10 @@ function renderTeamStandings() {
                         <td>
                           <div class="standing-member">
                             <img class="standing-team-logo" src="${standing.logo}" alt="${standing.team} logo" loading="lazy" />
-                            <span>
-                              <strong>${standing.team}</strong>
-                              <small>${standing.owners.map((owner) => owner.member).join(' · ')}</small>
-                            </span>
+                            <strong>${standing.team}</strong>
                           </div>
                         </td>
+                        <td class="standing-owner">${standing.owners.map((owner) => owner.member).join(' · ')}</td>
                         <td>${standing.played}</td>
                         <td>${formatGoalDifference(standing.goalDifference)}</td>
                         <td><strong class="standing-points">${standing.points}</strong></td>
