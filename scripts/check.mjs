@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 
 const PICKS_URL = 'https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=20260611-20260719&limit=500';
+const BUILD_VERSION = '__BUILD_VERSION__';
 
 const NAME_ALIASES = {
   usa: 'united states',
@@ -17,6 +18,7 @@ function normalizeTeamName(name) {
 }
 
 const picks = JSON.parse(await readFile(new URL('../data/family-picks.json', import.meta.url), 'utf8'));
+const index = await readFile(new URL('../index.html', import.meta.url), 'utf8');
 const response = await fetch(PICKS_URL);
 if (!response.ok) {
   throw new Error(`Scoreboard fetch failed: ${response.status}`);
@@ -46,6 +48,12 @@ for (const event of events) {
 const missingTeams = [...pickedTeams].filter((team) => !eventTeams.has(team));
 if (missingTeams.length) {
   throw new Error(`Missing picked teams from scoreboard feed: ${missingTeams.join(', ')}`);
+}
+
+for (const asset of ['styles.css', 'app.js']) {
+  if (!index.includes(`./${asset}?v=${BUILD_VERSION}`)) {
+    throw new Error(`${asset} must use the deployment build version to avoid mixed cached releases`);
+  }
 }
 
 console.log(`check ok: ${events.length} matches loaded, ${pickedTeams.size} picked teams mapped`);
