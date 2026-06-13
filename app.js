@@ -90,8 +90,7 @@ const els = {
   memberSummary: document.querySelector('#member-summary'),
   standingsHead: document.querySelector('#standings-table thead'),
   standingsBody: document.querySelector('#standings-table tbody'),
-  teamStandingsHead: document.querySelector('#team-standings-table thead'),
-  teamStandingsBody: document.querySelector('#team-standings-table tbody'),
+  teamStandingsGroups: document.querySelector('#team-standings-groups'),
   picksHead: document.querySelector('#picks-table thead'),
   picksBody: document.querySelector('#picks-table tbody'),
   spotlight: document.querySelector('#spotlight'),
@@ -356,41 +355,50 @@ function calculateMemberStanding(member) {
 }
 
 function renderTeamStandings() {
-  const standings = calculateTeamStandings();
+  const standingsByGroup = calculateTeamStandings();
 
-  els.teamStandingsHead.innerHTML = `
-    <tr>
-      <th scope="col">Rank</th>
-      <th scope="col">Team</th>
-      <th scope="col">Family owner</th>
-      <th scope="col" title="Played">P</th>
-      <th scope="col" title="Wins">W</th>
-      <th scope="col" title="Draws">D</th>
-      <th scope="col" title="Losses">L</th>
-      <th scope="col" title="Goal difference">GD</th>
-      <th scope="col" title="Points">Pts</th>
-    </tr>
-  `;
-
-  els.teamStandingsBody.innerHTML = standings
+  els.teamStandingsGroups.innerHTML = standingsByGroup
     .map(
-      (standing, index) => `
-        <tr>
-          <td><strong class="standing-rank">${index + 1}</strong></td>
-          <td>
-            <div class="standing-member">
-              <img class="standing-team-logo" src="${standing.logo}" alt="${standing.team} logo" loading="lazy" />
-              <strong>${standing.team}</strong>
-            </div>
-          </td>
-          <td>${standing.owners.map((owner) => owner.member).join(' · ') || '—'}</td>
-          <td>${standing.played}</td>
-          <td>${standing.wins}</td>
-          <td>${standing.draws}</td>
-          <td>${standing.losses}</td>
-          <td>${formatGoalDifference(standing.goalDifference)}</td>
-          <td><strong class="standing-points">${standing.points}</strong></td>
-        </tr>
+      ([group, standings]) => `
+        <article class="team-standing-group">
+          <h3>Group ${group}</h3>
+          <div class="table-wrap">
+            <table class="team-standings-table">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Team</th>
+                  <th scope="col" title="Played">P</th>
+                  <th scope="col" title="Goal difference">GD</th>
+                  <th scope="col" title="Points">Pts</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${standings
+                  .map(
+                    (standing, index) => `
+                      <tr>
+                        <td><strong class="standing-rank">${index + 1}</strong></td>
+                        <td>
+                          <div class="standing-member">
+                            <img class="standing-team-logo" src="${standing.logo}" alt="${standing.team} logo" loading="lazy" />
+                            <span>
+                              <strong>${standing.team}</strong>
+                              <small>${standing.owners.map((owner) => owner.member).join(' · ')}</small>
+                            </span>
+                          </div>
+                        </td>
+                        <td>${standing.played}</td>
+                        <td>${formatGoalDifference(standing.goalDifference)}</td>
+                        <td><strong class="standing-points">${standing.points}</strong></td>
+                      </tr>
+                    `,
+                  )
+                  .join('')}
+              </tbody>
+            </table>
+          </div>
+        </article>
       `,
     )
     .join('');
@@ -402,7 +410,15 @@ function calculateTeamStandings() {
   for (const event of state.events) {
     for (const team of [event.home, event.away]) {
       if (team.owners.length && !standings.has(team.name)) {
-        standings.set(team.name, createStanding({ team: team.name, logo: team.logo, owners: team.owners }));
+        standings.set(
+          team.name,
+          createStanding({
+            team: team.name,
+            logo: team.logo,
+            owners: team.owners,
+            group: team.owners[0].group,
+          }),
+        );
       }
     }
 
@@ -416,7 +432,12 @@ function calculateTeamStandings() {
     }
   }
 
-  return [...standings.values()].sort(compareStandings);
+  return state.groups.map((group) => [
+    group.group,
+    [...standings.values()]
+      .filter((standing) => standing.group === group.group)
+      .sort(compareStandings),
+  ]);
 }
 
 function createStanding(identity) {

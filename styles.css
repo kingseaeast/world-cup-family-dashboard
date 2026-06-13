@@ -319,7 +319,7 @@ details[open] .when-open {
 
 #picks-table,
 #standings-table,
-#team-standings-table {
+.team-standings-table {
   width: 100%;
   border-collapse: collapse;
 }
@@ -328,8 +328,8 @@ details[open] .when-open {
 #picks-table td,
 #standings-table th,
 #standings-table td,
-#team-standings-table th,
-#team-standings-table td {
+.team-standings-table th,
+.team-standings-table td {
   text-align: left;
   padding: 14px 12px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.12);
@@ -338,7 +338,7 @@ details[open] .when-open {
 
 #picks-table thead th,
 #standings-table thead th,
-#team-standings-table thead th {
+.team-standings-table thead th {
   color: var(--accent);
   font-size: 0.78rem;
   text-transform: uppercase;
@@ -350,6 +350,43 @@ details[open] .when-open {
   align-items: center;
   gap: 10px;
   min-width: 140px;
+}
+
+.standing-member span {
+  display: grid;
+  gap: 2px;
+}
+
+.standing-member small {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.team-standings-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.team-standing-group {
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 18px;
+  background: rgba(9, 18, 32, 0.64);
+}
+
+.team-standing-group h3 {
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.team-standings-table th,
+.team-standings-table td {
+  padding: 12px 10px;
+}
+
+.team-standings-table .standing-member {
+  min-width: 180px;
 }
 
 .standing-avatar {
@@ -578,6 +615,7 @@ details[open] .when-open {
   .controls-panel,
   .summary-grid,
   .spotlight-grid,
+  .team-standings-groups,
   .fixtures-grid {
     grid-template-columns: 1fr;
   }
