@@ -9,6 +9,7 @@ Single-page static app for tracking the family World Cup sweepstakes:
 
 - Family picks: `data/family-picks.json` (copied from the shared Google Sheet)
 - Schedule/results: ESPN World Cup scoreboard JSON
+- Championship probability models: `docs/championship-probability.md`
 
 ## Local use
 

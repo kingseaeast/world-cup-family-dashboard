@@ -518,6 +518,10 @@ details[open] .when-open {
   color: var(--muted);
 }
 
+.power-outlook {
+  min-width: 190px;
+}
+
 .standing-avatar {
   width: 34px;
   height: 34px;

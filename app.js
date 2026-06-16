@@ -64,7 +64,29 @@ const TEAM_FLAG_CODES = {
 };
 
 const DISPLAY_TIME_ZONE = 'America/Los_Angeles';
+const FORECAST_METHODS = {
+  MONTE_CARLO_LITE: 'monteCarloLite',
+  FULL_MONTE_CARLO_BRACKET: 'fullMonteCarloBracket',
+  API_ODDS: 'apiOdds',
+};
+const CHAMPIONSHIP_FORECAST_METHOD = FORECAST_METHODS.MONTE_CARLO_LITE;
 const CHAMPIONSHIP_RANK_DECAY = 0.045;
+const CHAMPIONSHIP_SIMULATION_RUNS = 2000;
+const CHAMPIONSHIP_SIMULATION_SEED = 20260611;
+const CHAMPIONSHIP_STRENGTH_POWER = 4;
+const KNOCKOUT_MATCH_STRENGTH_POWER = 1.35;
+const GROUP_DRAW_PROBABILITY = 0.24;
+const TITLE_ODDS_URL = './data/title-odds.json';
+const PATH_MULTIPLIERS = {
+  groupWinner: 1,
+  runnerUp: 0.72,
+  thirdPlace: 0.46,
+};
+const KNOCKOUT_PATH_ORDER = {
+  groupWinner: 0,
+  runnerUp: 1,
+  thirdPlace: 2,
+};
 
 const MEMBER_THUMBNAILS = {
   Nathan: './assets/family/nathan.jpg',
@@ -80,6 +102,8 @@ const state = {
   groups: [],
   events: [],
   worldRankings: new Map(),
+  championshipForecast: null,
+  titleOdds: null,
   loadedAt: null,
 };
 
@@ -130,11 +154,26 @@ async function init() {
   state.groups = picksData.groups;
   state.worldRankings = buildWorldRankings(picksData.worldRankings?.teams ?? {});
   state.events = buildEvents(scoreboardData.events ?? [], picksData.groups);
+  state.titleOdds = await loadTitleOddsForForecast();
+  state.championshipForecast = calculateChampionshipForecast();
   state.loadedAt = new Date();
 
   renderFilters();
   renderPicksTable();
   render();
+}
+
+async function loadTitleOddsForForecast() {
+  if (CHAMPIONSHIP_FORECAST_METHOD !== FORECAST_METHODS.API_ODDS) {
+    return null;
+  }
+
+  const response = await fetch(TITLE_ODDS_URL);
+  if (!response.ok) {
+    throw new Error('failed to load title odds');
+  }
+
+  return response.json();
 }
 
 function normalizeTeamName(name) {
@@ -290,6 +329,7 @@ function renderPicksTable() {
 
 function render() {
   const events = getFilteredEvents();
+  const championshipForecast = state.championshipForecast;
 
   const liveCount = state.events.filter((event) => event.status === 'in').length;
   const completedCount = state.events.filter((event) => event.completed).length;
@@ -301,10 +341,10 @@ function render() {
 
   els.dataStatus.textContent = `ESPN schedule/results • refreshed ${formatRefreshTime(state.loadedAt)}`;
 
-  renderMemberSummary();
+  renderMemberSummary(championshipForecast);
   renderStandings();
   renderTeamStandings();
-  renderTeamPowerRankings();
+  renderTeamPowerRankings(championshipForecast);
   renderSpotlight(events);
   renderFixtures(events);
 }
@@ -456,13 +496,15 @@ function calculateTeamStandings() {
   ]);
 }
 
-function renderTeamPowerRankings() {
-  const rows = getTeamPowerRankings();
+function renderTeamPowerRankings(championshipForecast) {
+  const rows = getTeamPowerRankings(championshipForecast);
 
   els.teamPowerRankingsHead.innerHTML = `
     <tr>
       <th scope="col">World rank</th>
       <th scope="col">Team</th>
+      <th scope="col">Title</th>
+      <th scope="col">Outlook</th>
       <th scope="col">Family member</th>
       <th scope="col">Group</th>
     </tr>
@@ -479,6 +521,8 @@ function renderTeamPowerRankings() {
               <strong>${row.team}</strong>
             </div>
           </td>
+          <td><strong class="standing-points">${formatTitleProbability(row.titleProbability)}</strong></td>
+          <td class="standing-owner power-outlook">${row.reason}</td>
           <td class="standing-owner">${row.member}</td>
           <td><strong>Group ${row.group}</strong></td>
         </tr>
@@ -487,7 +531,7 @@ function renderTeamPowerRankings() {
     .join('');
 }
 
-function getTeamPowerRankings() {
+function getTeamPowerRankings(championshipForecast) {
   return state.groups
     .flatMap((group) =>
       Object.entries(group.picks).map(([member, team]) => ({
@@ -496,6 +540,8 @@ function getTeamPowerRankings() {
         group: group.group,
         rank: state.worldRankings.get(normalizeTeamName(team)),
         logo: findTeamLogo(team),
+        titleProbability: championshipForecast.teams.get(normalizeTeamName(team))?.probability ?? 0,
+        reason: championshipForecast.teams.get(normalizeTeamName(team))?.reason ?? 'No projection',
       })),
     )
     .sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity) || a.team.localeCompare(b.team));
@@ -569,6 +615,16 @@ function formatProbability(value) {
   }).format(value);
 }
 
+function formatTitleProbability(value) {
+  if (value <= 0) return '0%';
+  if (value < 0.001) return '<0.1%';
+
+  return new Intl.NumberFormat(undefined, {
+    style: 'percent',
+    maximumFractionDigits: value < 0.1 ? 1 : 0,
+  }).format(value);
+}
+
 function formatPercentageWidth(value) {
   return `${Math.max(0, Math.min(100, value * 100))}%`;
 }
@@ -589,12 +645,10 @@ function getFilteredEvents() {
   });
 }
 
-function renderMemberSummary() {
-  const championshipProbabilities = calculateChampionshipProbabilities();
-
+function renderMemberSummary(championshipForecast) {
   els.memberSummary.innerHTML = state.members
     .map((member) => {
-      const forecast = championshipProbabilities.get(member);
+      const forecast = championshipForecast.members.get(member);
       const games = state.events.filter((event) =>
         [...event.home.owners, ...event.away.owners].some((owner) => owner.member === member),
       );
@@ -646,44 +700,145 @@ function renderMemberSummary() {
     .join('');
 }
 
-function calculateChampionshipProbabilities() {
-  const eliminatedTeams = calculateEliminatedTeams();
-  const forecasts = new Map();
-  let totalScore = 0;
+function calculateChampionshipForecast(method = CHAMPIONSHIP_FORECAST_METHOD) {
+  const teamRecords = getPickedTeamRecords();
+  const finalChampion = getCompletedFinalChampion();
 
-  for (const member of state.members) {
-    const teams = getMemberTeams(member).map((team) => {
-      const rank = state.worldRankings.get(normalizeTeamName(team));
-      const eliminated = eliminatedTeams.has(normalizeTeamName(team));
-      const strength = rank && !eliminated ? calculateRankingStrength(rank) : 0;
-
-      return { team, rank, eliminated, strength };
-    });
-
-    const score = teams.reduce((sum, team) => sum + team.strength, 0);
-    totalScore += score;
-    forecasts.set(member, {
-      member,
-      teams,
-      score,
-      probability: 0,
-      topTeam: getTopChampionshipTeam(teams),
-      survivingTeams: teams.filter((team) => !team.eliminated).length,
-    });
+  if (finalChampion) {
+    return buildCompletedChampionshipForecast(teamRecords, finalChampion, method);
   }
 
-  for (const forecast of forecasts.values()) {
-    forecast.probability = totalScore > 0 ? forecast.score / totalScore : 0;
+  if (method === FORECAST_METHODS.FULL_MONTE_CARLO_BRACKET) {
+    return calculateFullMonteCarloBracketForecast(teamRecords);
   }
 
-  return forecasts;
+  if (method === FORECAST_METHODS.API_ODDS) {
+    return calculateApiOddsForecast(teamRecords);
+  }
+
+  return calculateMonteCarloLiteForecast(teamRecords);
+}
+
+function calculateMonteCarloLiteForecast(teamRecords) {
+  const teamForecasts = initializeTeamForecasts(teamRecords);
+  const knockoutEliminated = calculateCompletedKnockoutEliminations();
+  const random = createSeededRandom(CHAMPIONSHIP_SIMULATION_SEED);
+
+  for (let run = 0; run < CHAMPIONSHIP_SIMULATION_RUNS; run += 1) {
+    const simulation = simulateGroupStage(random, teamRecords);
+    const titleScores = new Map();
+    let simulationTotalScore = 0;
+
+    for (const qualifiedTeam of simulation.qualifiedTeams) {
+      if (knockoutEliminated.has(qualifiedTeam.key)) continue;
+
+      const titleScore = calculateTitleScore(qualifiedTeam.rank, qualifiedTeam.path);
+      if (!titleScore) continue;
+
+      titleScores.set(qualifiedTeam.key, titleScore);
+      simulationTotalScore += titleScore;
+      recordTeamPath(teamForecasts.get(qualifiedTeam.key), qualifiedTeam.path);
+    }
+
+    for (const forecast of teamForecasts.values()) {
+      forecast.simulations += 1;
+      const titleScore = titleScores.get(forecast.key) ?? 0;
+      forecast.titleShare += simulationTotalScore > 0 ? titleScore / simulationTotalScore : 0;
+    }
+  }
+
+  for (const forecast of teamForecasts.values()) {
+    forecast.probability = forecast.simulations > 0 ? forecast.titleShare / forecast.simulations : 0;
+    forecast.advanceProbability = forecast.simulations > 0 ? forecast.advanced / forecast.simulations : 0;
+    forecast.reason = renderTeamForecastReason(forecast);
+  }
+
+  return buildChampionshipForecastResult(teamForecasts, FORECAST_METHODS.MONTE_CARLO_LITE);
+}
+
+function calculateFullMonteCarloBracketForecast(teamRecords) {
+  const teamForecasts = initializeTeamForecasts(teamRecords);
+  const knockoutEliminated = calculateCompletedKnockoutEliminations();
+  const random = createSeededRandom(CHAMPIONSHIP_SIMULATION_SEED);
+
+  for (let run = 0; run < CHAMPIONSHIP_SIMULATION_RUNS; run += 1) {
+    const simulation = simulateGroupStage(random, teamRecords);
+    const qualifiedTeams = simulation.qualifiedTeams.filter((team) => !knockoutEliminated.has(team.key));
+    const champion = simulateKnockoutBracket(qualifiedTeams, random);
+
+    for (const qualifiedTeam of qualifiedTeams) {
+      recordTeamPath(teamForecasts.get(qualifiedTeam.key), qualifiedTeam.path);
+    }
+
+    for (const forecast of teamForecasts.values()) {
+      forecast.simulations += 1;
+    }
+
+    if (champion) {
+      teamForecasts.get(champion.key).titleShare += 1;
+    }
+  }
+
+  for (const forecast of teamForecasts.values()) {
+    forecast.probability = forecast.simulations > 0 ? forecast.titleShare / forecast.simulations : 0;
+    forecast.advanceProbability = forecast.simulations > 0 ? forecast.advanced / forecast.simulations : 0;
+    forecast.reason = renderTeamForecastReason(forecast);
+  }
+
+  return buildChampionshipForecastResult(teamForecasts, FORECAST_METHODS.FULL_MONTE_CARLO_BRACKET);
+}
+
+function calculateApiOddsForecast(teamRecords) {
+  const teamForecasts = initializeTeamForecasts(teamRecords);
+  const apiOdds = normalizeApiTitleOdds(state.titleOdds);
+  const knockoutEliminated = calculateCompletedKnockoutEliminations();
+  let totalLiveOdds = 0;
+
+  for (const forecast of teamForecasts.values()) {
+    forecast.simulations = 1;
+
+    if (knockoutEliminated.has(forecast.key)) {
+      forecast.reason = 'Eliminated';
+      continue;
+    }
+
+    const odds = apiOdds.teams.get(forecast.key);
+    forecast.apiOdds = odds;
+    forecast.rawApiProbability = odds?.rawProbability ?? 0;
+    totalLiveOdds += forecast.rawApiProbability;
+  }
+
+  for (const forecast of teamForecasts.values()) {
+    forecast.probability = totalLiveOdds > 0 ? forecast.rawApiProbability / totalLiveOdds : 0;
+    forecast.advanceProbability = forecast.probability > 0 ? 1 : 0;
+    forecast.reason = renderApiTeamForecastReason(forecast, apiOdds);
+  }
+
+  return buildChampionshipForecastResult(teamForecasts, FORECAST_METHODS.API_ODDS, apiOdds.source);
+}
+
+function buildChampionshipForecastResult(teamForecasts, method, source = '') {
+  return {
+    method,
+    source,
+    teams: teamForecasts,
+    members: buildMemberForecasts(teamForecasts),
+  };
 }
 
 function calculateRankingStrength(rank) {
+  if (!rank) return 0;
+
   return Math.exp(-CHAMPIONSHIP_RANK_DECAY * (rank - 1));
 }
 
-function calculateEliminatedTeams() {
+function calculateTitleScore(rank, path) {
+  if (!rank) return 0;
+
+  return (calculateRankingStrength(rank) ** CHAMPIONSHIP_STRENGTH_POWER) * PATH_MULTIPLIERS[path];
+}
+
+function calculateCompletedKnockoutEliminations() {
   const eliminated = new Set();
 
   for (const event of state.events) {
@@ -693,54 +848,331 @@ function calculateEliminatedTeams() {
     if (event.away.winner) eliminated.add(normalizeTeamName(event.home.name));
   }
 
-  const groupAdvancers = calculateGroupAdvancers();
-  if (groupAdvancers) {
-    for (const group of state.groups) {
-      for (const team of Object.values(group.picks)) {
-        const key = normalizeTeamName(team);
-        if (!groupAdvancers.has(key)) {
-          eliminated.add(key);
-        }
-      }
-    }
-  }
-
   return eliminated;
 }
 
-function calculateGroupAdvancers() {
-  const groupStageEvents = state.events.filter((event) => event.stageSlug === 'group-stage');
-  if (!groupStageEvents.length || groupStageEvents.some((event) => !event.completed)) return null;
+function getCompletedFinalChampion() {
+  const final = state.events.find((event) => event.stageSlug === 'final' && event.completed);
+  if (!final) return null;
 
-  const standingsByGroup = calculateTeamStandings();
-  const advancers = new Set();
-  const thirdPlaceTeams = [];
+  return final.home.winner ? final.home.name : final.away.winner ? final.away.name : null;
+}
 
-  for (const [, standings] of standingsByGroup) {
-    standings.slice(0, 2).forEach((standing) => advancers.add(normalizeTeamName(standing.team)));
-    if (standings[2]) thirdPlaceTeams.push(standings[2]);
+function getPickedTeamRecords() {
+  return state.groups.flatMap((group) =>
+    Object.entries(group.picks).map(([member, team]) => ({
+      key: normalizeTeamName(team),
+      team,
+      member,
+      group: group.group,
+      rank: state.worldRankings.get(normalizeTeamName(team)),
+      logo: findTeamLogo(team),
+    })),
+  );
+}
+
+function initializeTeamForecasts(teamRecords) {
+  const forecasts = new Map();
+
+  for (const record of teamRecords) {
+    forecasts.set(record.key, {
+      ...record,
+      simulations: 0,
+      titleShare: 0,
+      probability: 0,
+      advanced: 0,
+      advanceProbability: 0,
+      groupWinner: 0,
+      runnerUp: 0,
+      thirdPlace: 0,
+      reason: '',
+    });
   }
 
-  thirdPlaceTeams
-    .sort(compareStandings)
-    .slice(0, 8)
-    .forEach((standing) => advancers.add(normalizeTeamName(standing.team)));
+  return forecasts;
+}
 
-  return advancers;
+function buildCompletedChampionshipForecast(teamRecords, champion, method = CHAMPIONSHIP_FORECAST_METHOD) {
+  const championKey = normalizeTeamName(champion);
+  const teamForecasts = initializeTeamForecasts(teamRecords);
+
+  for (const forecast of teamForecasts.values()) {
+    forecast.simulations = 1;
+    forecast.probability = forecast.key === championKey ? 1 : 0;
+    forecast.advanceProbability = forecast.key === championKey ? 1 : 0;
+    forecast.reason = forecast.key === championKey ? 'Champion' : 'Tournament complete';
+  }
+
+  return buildChampionshipForecastResult(teamForecasts, method);
+}
+
+function buildMemberForecasts(teamForecasts) {
+  const forecasts = new Map();
+
+  for (const member of state.members) {
+    const teams = [...teamForecasts.values()].filter((forecast) => forecast.member === member);
+    const probability = teams.reduce((sum, team) => sum + team.probability, 0);
+    const topTeam = getTopChampionshipTeam(teams);
+
+    forecasts.set(member, {
+      member,
+      teams,
+      probability,
+      topTeam,
+      reason: topTeam ? renderMemberForecastReason(topTeam) : 'No teams left in the title race',
+    });
+  }
+
+  return forecasts;
 }
 
 function isChampionshipKnockoutStage(stageSlug) {
   return ['round-of-32', 'round-of-16', 'quarterfinals', 'semifinals', 'final'].includes(stageSlug);
 }
 
-function getMemberTeams(member) {
-  return state.groups.map((group) => group.picks[member]).filter(Boolean);
+function simulateGroupStage(random, teamRecords) {
+  const recordsByTeam = new Map(teamRecords.map((record) => [record.key, record]));
+  const standings = initializeSimulationStandings(teamRecords);
+
+  for (const event of state.events.filter((item) => item.stageSlug === 'group-stage')) {
+    const home = recordsByTeam.get(normalizeTeamName(event.home.name));
+    const away = recordsByTeam.get(normalizeTeamName(event.away.name));
+    if (!home || !away) continue;
+
+    const result = event.completed ? getCompletedEventResult(event) : simulateGroupMatch(home, away, random);
+    recordSimulatedResult(standings.get(home.key), result.home);
+    recordSimulatedResult(standings.get(away.key), result.away);
+  }
+
+  return selectSimulationQualifiers(standings);
+}
+
+function initializeSimulationStandings(teamRecords) {
+  const standings = new Map();
+
+  for (const record of teamRecords) {
+    standings.set(record.key, {
+      ...record,
+      played: 0,
+      wins: 0,
+      draws: 0,
+      losses: 0,
+      goalsFor: 0,
+      goalsAgainst: 0,
+      goalDifference: 0,
+      points: 0,
+    });
+  }
+
+  return standings;
+}
+
+function getCompletedEventResult(event) {
+  return {
+    home: {
+      goalsFor: Number(event.home.score) || 0,
+      goalsAgainst: Number(event.away.score) || 0,
+    },
+    away: {
+      goalsFor: Number(event.away.score) || 0,
+      goalsAgainst: Number(event.home.score) || 0,
+    },
+  };
+}
+
+function simulateGroupMatch(home, away, random) {
+  const homeStrength = calculateRankingStrength(home.rank);
+  const awayStrength = calculateRankingStrength(away.rank);
+  const homeWinShare = homeStrength / (homeStrength + awayStrength);
+  const drawChance = GROUP_DRAW_PROBABILITY;
+  const roll = random();
+
+  if (roll < drawChance) {
+    const goals = random() < 0.55 ? 1 : random() < 0.82 ? 0 : 2;
+    return {
+      home: { goalsFor: goals, goalsAgainst: goals },
+      away: { goalsFor: goals, goalsAgainst: goals },
+    };
+  }
+
+  const homeWins = (roll - drawChance) / (1 - drawChance) < homeWinShare;
+  const margin = random() < 0.72 ? 1 : random() < 0.92 ? 2 : 3;
+  const loserGoals = random() < 0.58 ? 0 : random() < 0.88 ? 1 : 2;
+  const winnerGoals = loserGoals + margin;
+
+  return {
+    home: {
+      goalsFor: homeWins ? winnerGoals : loserGoals,
+      goalsAgainst: homeWins ? loserGoals : winnerGoals,
+    },
+    away: {
+      goalsFor: homeWins ? loserGoals : winnerGoals,
+      goalsAgainst: homeWins ? winnerGoals : loserGoals,
+    },
+  };
+}
+
+function recordSimulatedResult(standing, result) {
+  standing.played += 1;
+  standing.goalsFor += result.goalsFor;
+  standing.goalsAgainst += result.goalsAgainst;
+  standing.goalDifference = standing.goalsFor - standing.goalsAgainst;
+
+  if (result.goalsFor > result.goalsAgainst) {
+    standing.wins += 1;
+    standing.points += 3;
+  } else if (result.goalsFor < result.goalsAgainst) {
+    standing.losses += 1;
+  } else {
+    standing.draws += 1;
+    standing.points += 1;
+  }
+}
+
+function selectSimulationQualifiers(standings) {
+  const grouped = new Map();
+  const qualifiedTeams = [];
+  const thirdPlaceTeams = [];
+
+  for (const standing of standings.values()) {
+    const current = grouped.get(standing.group) ?? [];
+    current.push(standing);
+    grouped.set(standing.group, current);
+  }
+
+  for (const groupStandings of grouped.values()) {
+    const sorted = [...groupStandings].sort(compareStandings);
+    if (sorted[0]) qualifiedTeams.push({ ...sorted[0], path: 'groupWinner' });
+    if (sorted[1]) qualifiedTeams.push({ ...sorted[1], path: 'runnerUp' });
+    if (sorted[2]) thirdPlaceTeams.push(sorted[2]);
+  }
+
+  thirdPlaceTeams
+    .sort(compareStandings)
+    .slice(0, 8)
+    .forEach((team) => qualifiedTeams.push({ ...team, path: 'thirdPlace' }));
+
+  return { qualifiedTeams };
+}
+
+function simulateKnockoutBracket(teams, random) {
+  if (!teams.length) return null;
+  if (teams.length === 1) return teams[0];
+
+  let pairs = buildInitialKnockoutPairs(teams);
+
+  while (pairs.length) {
+    const winners = pairs.map(([teamA, teamB]) => simulateKnockoutWinner(teamA, teamB, random)).filter(Boolean);
+    if (winners.length <= 1) return winners[0] ?? null;
+    pairs = pairAdjacentTeams(winners);
+  }
+
+  return null;
+}
+
+function buildInitialKnockoutPairs(teams) {
+  const seeded = [...teams].sort(compareKnockoutSeeds);
+  const pairs = [];
+
+  for (let start = 0, end = seeded.length - 1; start <= end; start += 1, end -= 1) {
+    pairs.push([seeded[start], start === end ? null : seeded[end]]);
+  }
+
+  return pairs;
+}
+
+function pairAdjacentTeams(teams) {
+  const pairs = [];
+
+  for (let index = 0; index < teams.length; index += 2) {
+    pairs.push([teams[index], teams[index + 1] ?? null]);
+  }
+
+  return pairs;
+}
+
+function compareKnockoutSeeds(a, b) {
+  return (
+    KNOCKOUT_PATH_ORDER[a.path] - KNOCKOUT_PATH_ORDER[b.path] ||
+    compareStandings(a, b) ||
+    (a.rank ?? Infinity) - (b.rank ?? Infinity) ||
+    a.team.localeCompare(b.team)
+  );
+}
+
+function simulateKnockoutWinner(teamA, teamB, random) {
+  if (!teamA) return teamB;
+  if (!teamB) return teamA;
+
+  const teamAStrength = calculateKnockoutMatchStrength(teamA.rank);
+  const teamBStrength = calculateKnockoutMatchStrength(teamB.rank);
+  const totalStrength = teamAStrength + teamBStrength;
+  const teamAWinProbability = totalStrength > 0 ? teamAStrength / totalStrength : 0.5;
+
+  return random() < teamAWinProbability ? teamA : teamB;
+}
+
+function calculateKnockoutMatchStrength(rank) {
+  return calculateRankingStrength(rank) ** KNOCKOUT_MATCH_STRENGTH_POWER;
+}
+
+function normalizeApiTitleOdds(oddsData) {
+  const teams = new Map();
+  const source = oddsData?.source ?? oddsData?.provider ?? 'External title odds';
+  const updatedAt = oddsData?.updatedAt ?? oddsData?.lastUpdated ?? '';
+  const entries = Array.isArray(oddsData?.teams)
+    ? oddsData.teams
+    : Object.entries(oddsData?.teams ?? {}).map(([team, value]) =>
+        typeof value === 'number' ? { team, probability: value } : { team, ...value },
+      );
+
+  for (const entry of entries) {
+    const teamName = entry.team ?? entry.name ?? entry.subject;
+    if (!teamName) continue;
+
+    const rawProbability = getApiRawProbability(entry);
+    if (!rawProbability) continue;
+
+    teams.set(normalizeTeamName(teamName), {
+      team: teamName,
+      vendor: entry.vendor ?? entry.bookmaker ?? entry.source ?? '',
+      market: entry.market ?? entry.marketName ?? entry.market_type ?? '',
+      updatedAt: entry.updatedAt ?? entry.updated_at ?? updatedAt,
+      rawProbability,
+    });
+  }
+
+  return { teams, source, updatedAt };
+}
+
+function getApiRawProbability(entry) {
+  const explicitProbability = Number(entry.probability ?? entry.normalizedProbability ?? entry.impliedProbability);
+  if (Number.isFinite(explicitProbability) && explicitProbability > 0) {
+    return explicitProbability > 1 ? explicitProbability / 100 : explicitProbability;
+  }
+
+  const decimalOdds = Number(entry.decimalOdds ?? entry.decimal_odds);
+  if (Number.isFinite(decimalOdds) && decimalOdds > 1) {
+    return 1 / decimalOdds;
+  }
+
+  const americanOdds = Number(entry.americanOdds ?? entry.american_odds);
+  if (Number.isFinite(americanOdds) && americanOdds !== 0) {
+    return americanOdds > 0 ? 100 / (americanOdds + 100) : Math.abs(americanOdds) / (Math.abs(americanOdds) + 100);
+  }
+
+  return 0;
+}
+
+function recordTeamPath(forecast, path) {
+  forecast.advanced += 1;
+  forecast[path] += 1;
 }
 
 function getTopChampionshipTeam(teams) {
   return [...teams]
-    .filter((team) => team.strength > 0)
-    .sort((a, b) => b.strength - a.strength || a.team.localeCompare(b.team))[0];
+    .filter((team) => team.probability > 0)
+    .sort((a, b) => b.probability - a.probability || a.team.localeCompare(b.team))[0];
 }
 
 function renderForecastNote(forecast) {
@@ -748,7 +1180,51 @@ function renderForecastNote(forecast) {
     return 'No teams left in the title race';
   }
 
-  return `<strong>${forecast.topTeam.team}</strong> leads the path · FIFA rank ${forecast.topTeam.rank}`;
+  return `<strong>${forecast.topTeam.team}</strong> leads · ${forecast.reason}`;
+}
+
+function renderMemberForecastReason(teamForecast) {
+  return `${formatTitleProbability(teamForecast.probability)} title shot · ${teamForecast.reason}`;
+}
+
+function renderTeamForecastReason(forecast) {
+  if (forecast.probability <= 0) return 'No live title path';
+
+  const path = getMostLikelyPath(forecast);
+  return `${formatTitleProbability(forecast.advanceProbability)} to advance · ${path.label}`;
+}
+
+function renderApiTeamForecastReason(forecast, apiOdds) {
+  if (forecast.probability <= 0) {
+    return forecast.reason || 'No external title odds';
+  }
+
+  const vendor = forecast.apiOdds?.vendor ? ` · ${forecast.apiOdds.vendor}` : '';
+  const updatedAt = forecast.apiOdds?.updatedAt ?? apiOdds.updatedAt;
+  const updatedDate = updatedAt ? new Date(updatedAt) : null;
+  const freshness =
+    updatedDate && !Number.isNaN(updatedDate.valueOf()) ? ` · updated ${formatShortDate(updatedDate)}` : '';
+
+  return `Market-implied title odds${vendor}${freshness}`;
+}
+
+function getMostLikelyPath(forecast) {
+  const paths = [
+    { key: 'groupWinner', label: `${formatTitleProbability(forecast.groupWinner / forecast.simulations)} group winner` },
+    { key: 'runnerUp', label: `${formatTitleProbability(forecast.runnerUp / forecast.simulations)} runner-up` },
+    { key: 'thirdPlace', label: `${formatTitleProbability(forecast.thirdPlace / forecast.simulations)} third-place path` },
+  ];
+
+  return paths.sort((a, b) => forecast[b.key] - forecast[a.key])[0];
+}
+
+function createSeededRandom(seed) {
+  let value = seed >>> 0;
+
+  return () => {
+    value = (value * 1664525 + 1013904223) >>> 0;
+    return value / 2 ** 32;
+  };
 }
 
 function renderSpotlight(events) {
@@ -970,6 +1446,14 @@ function formatRefreshTime(date) {
     day: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
+  }).format(date);
+}
+
+function formatShortDate(date) {
+  return new Intl.DateTimeFormat(undefined, {
+    timeZone: DISPLAY_TIME_ZONE,
+    month: 'short',
+    day: 'numeric',
   }).format(date);
 }
 
