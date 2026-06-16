@@ -9,6 +9,7 @@ const NAME_ALIASES = {
   'dr congo': 'congo dr',
   'côte d’ivoire': 'ivory coast',
   "cote d'ivoire": 'ivory coast',
+  turkey: 'türkiye',
 };
 
 function normalizeTeamName(name) {
@@ -19,6 +20,7 @@ function normalizeTeamName(name) {
 
 const picks = JSON.parse(await readFile(new URL('../data/family-picks.json', import.meta.url), 'utf8'));
 const index = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+const titleOdds = JSON.parse(await readFile(new URL('../data/title-odds.json', import.meta.url), 'utf8'));
 const response = await fetch(PICKS_URL);
 if (!response.ok) {
   throw new Error(`Scoreboard fetch failed: ${response.status}`);
@@ -54,6 +56,12 @@ const rankedTeams = new Set(Object.keys(picks.worldRankings?.teams ?? {}).map(no
 const missingRankings = [...pickedTeams].filter((team) => !rankedTeams.has(team));
 if (missingRankings.length) {
   throw new Error(`Missing world rankings for picked teams: ${missingRankings.join(', ')}`);
+}
+
+const titleOddsTeams = new Set((titleOdds.teams ?? []).map((team) => normalizeTeamName(team.team)));
+const missingTitleOdds = [...pickedTeams].filter((team) => !titleOddsTeams.has(team));
+if (missingTitleOdds.length) {
+  throw new Error(`Missing Kalshi title odds for picked teams: ${missingTitleOdds.join(', ')}`);
 }
 
 for (const asset of ['styles.css', 'app.js']) {

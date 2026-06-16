@@ -15,6 +15,7 @@ Single-page static app for tracking the family World Cup sweepstakes:
 
 ```bash
 npm run check
+npm run update:kalshi-odds
 npm run serve
 # open http://localhost:4173
 ```

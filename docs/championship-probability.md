@@ -160,63 +160,68 @@ team probability = simulated championships / simulation runs
 
 This approach is more direct than Monte Carlo lite because teams win or lose simulated knockout matches instead of receiving a title-share allocation. It is still not using the official FIFA bracket slot map yet; the current implementation uses deterministic high-seed-vs-low-seed pairing so it can be switched on safely before the exact bracket-placement rules are encoded.
 
-## Implemented Future Option: API-Based Odds
+## Implemented Future Option: Kalshi API Odds
 
-The API strategy is designed for market-implied title probabilities. It is intentionally implemented as a static JSON reader rather than a browser-side API call because this app is deployed on GitHub Pages and should not expose API keys.
+The API strategy is designed for market-implied title probabilities from Kalshi's public market data API. It is intentionally implemented as a static JSON reader rather than a browser-side Kalshi call because this app is deployed on GitHub Pages, and Kalshi blocks browser-origin requests even though server-side public market-data requests do not require an API key.
 
-Recommended production flow:
+Current Kalshi source:
 
-1. A scheduled GitHub Action or local script fetches futures odds from a provider.
-2. The script converts odds into normalized `data/title-odds.json`.
-3. The frontend reads that static file when `CHAMPIONSHIP_FORECAST_METHOD` is `FORECAST_METHODS.API_ODDS`.
+```text
+series ticker: KXMENWORLDCUP
+event ticker: KXMENWORLDCUP-26
+API endpoint: https://external-api.kalshi.com/trade-api/v2/markets?series_ticker=KXMENWORLDCUP&limit=1000
+```
 
-Good candidate sources:
+Refresh flow:
 
-- [BALLDONTLIE FIFA World Cup futures odds](https://fifa.balldontlie.io/) exposes World Cup futures odds, including tournament winner odds, with sportsbook vendors such as DraftKings and FanDuel.
-- [The Odds API](https://the-odds-api.com/sports-odds-data/sports-apis.html) lists `soccer_fifa_world_cup_winner` for World Cup winner markets and supports decimal or American odds through its odds API.
+1. `npm run update:kalshi-odds` fetches Kalshi's 2026 Men's World Cup winner markets.
+2. The script converts the 48 YES contracts into `data/title-odds.json`.
+3. `.github/workflows/update-kalshi-odds.yml` refreshes the file daily and can also be run manually.
+4. The frontend reads that static file when `CHAMPIONSHIP_FORECAST_METHOD` is `FORECAST_METHODS.API_ODDS`.
+
+Kalshi provides public market-data endpoints at `https://external-api.kalshi.com/trade-api/v2`. Their docs show unauthenticated access for market data, including `/markets`, but authenticated trading endpoints are separate.
 
 ### Static Odds Contract
 
-The dashboard accepts either an object keyed by team name:
+The generated Kalshi file uses an array of team contracts:
 
 ```json
 {
-  "source": "BALLDONTLIE futures odds",
-  "updatedAt": "2026-06-15T12:00:00Z",
-  "teams": {
-    "Argentina": {
-      "vendor": "FanDuel",
-      "decimalOdds": 6.5,
-      "updatedAt": "2026-06-15T12:00:00Z"
-    }
-  }
-}
-```
-
-Or an array:
-
-```json
-{
-  "source": "The Odds API",
-  "updatedAt": "2026-06-15T12:00:00Z",
+  "source": "Kalshi KXMENWORLDCUP markets",
+  "sourceUrl": "https://kalshi.com/markets/kxmenworldcup",
+  "updatedAt": "2026-06-15T22:46:57.732031Z",
   "teams": [
     {
       "team": "Argentina",
-      "vendor": "DraftKings",
-      "americanOdds": 550,
-      "updatedAt": "2026-06-15T12:00:00Z"
+      "vendor": "Kalshi",
+      "market": "Will the Argentina win the 2026 Men's World Cup?",
+      "ticker": "KXMENWORLDCUP-26-AR",
+      "probability": 0.0845,
+      "yesBid": 0.084,
+      "yesAsk": 0.085,
+      "lastPrice": 0.085,
+      "updatedAt": "2026-06-15T22:46:56.99902Z"
     }
   ]
 }
 ```
 
-Accepted probability fields:
+The refresh script calculates each raw probability from Kalshi YES prices:
+
+```text
+if bid and ask exist: raw probability = (yes bid + yes ask) / 2
+if only ask exists: raw probability = yes ask / 2
+if only bid exists: raw probability = yes bid
+otherwise: raw probability = last traded YES price
+```
+
+The dashboard still accepts the generic odds fields below so another provider can be plugged in later:
 
 - `probability`, `normalizedProbability`, or `impliedProbability`
 - `decimalOdds` or `decimal_odds`
 - `americanOdds` or `american_odds`
 
-If odds are supplied, the dashboard converts them to implied probabilities:
+For non-Kalshi odds, the dashboard converts odds to implied probabilities:
 
 ```text
 decimal odds probability = 1 / decimalOdds

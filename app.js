@@ -9,6 +9,7 @@ const NAME_ALIASES = {
   'côte d’ivoire': 'ivory coast',
   "cote d'ivoire": 'ivory coast',
   curacao: 'curaçao',
+  turkey: 'türkiye',
 };
 
 const TEAM_FLAG_CODES = {

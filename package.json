@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "check": "node ./scripts/check.mjs",
+    "update:kalshi-odds": "node ./scripts/update-kalshi-title-odds.mjs",
     "serve": "python3 -m http.server 4173"
   }
 }
