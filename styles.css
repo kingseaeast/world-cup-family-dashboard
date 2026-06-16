@@ -202,13 +202,46 @@ h1 {
 .summary-card .stats {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.summary-card .stats > div {
+  min-width: 54px;
 }
 
 .summary-card .stats strong {
   display: block;
   font-size: 1.6rem;
+}
+
+.championship-forecast {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.championship-forecast strong {
+  color: var(--text);
+}
+
+.forecast-bar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.12);
+}
+
+.forecast-bar span {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--good));
 }
 
 .summary-card .next-game {
@@ -415,6 +448,7 @@ details[open] .when-open {
 }
 
 #picks-table,
+#team-power-rankings-table,
 #standings-table,
 .team-standings-table {
   width: 100%;
@@ -423,6 +457,8 @@ details[open] .when-open {
 
 #picks-table th,
 #picks-table td,
+#team-power-rankings-table th,
+#team-power-rankings-table td,
 #standings-table th,
 #standings-table td,
 .team-standings-table th,
@@ -434,6 +470,7 @@ details[open] .when-open {
 }
 
 #picks-table thead th,
+#team-power-rankings-table thead th,
 #standings-table thead th,
 .team-standings-table thead th {
   color: var(--accent);

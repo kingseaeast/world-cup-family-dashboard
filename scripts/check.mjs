@@ -50,6 +50,12 @@ if (missingTeams.length) {
   throw new Error(`Missing picked teams from scoreboard feed: ${missingTeams.join(', ')}`);
 }
 
+const rankedTeams = new Set(Object.keys(picks.worldRankings?.teams ?? {}).map(normalizeTeamName));
+const missingRankings = [...pickedTeams].filter((team) => !rankedTeams.has(team));
+if (missingRankings.length) {
+  throw new Error(`Missing world rankings for picked teams: ${missingRankings.join(', ')}`);
+}
+
 for (const asset of ['styles.css', 'app.js']) {
   if (!index.includes(`./${asset}?v=${BUILD_VERSION}`)) {
     throw new Error(`${asset} must use the deployment build version to avoid mixed cached releases`);

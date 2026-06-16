@@ -64,6 +64,7 @@ const TEAM_FLAG_CODES = {
 };
 
 const DISPLAY_TIME_ZONE = 'America/Los_Angeles';
+const CHAMPIONSHIP_RANK_DECAY = 0.045;
 
 const MEMBER_THUMBNAILS = {
   Nathan: './assets/family/nathan.jpg',
@@ -78,6 +79,7 @@ const state = {
   members: [],
   groups: [],
   events: [],
+  worldRankings: new Map(),
   loadedAt: null,
 };
 
@@ -91,6 +93,8 @@ const els = {
   standingsHead: document.querySelector('#standings-table thead'),
   standingsBody: document.querySelector('#standings-table tbody'),
   teamStandingsGroups: document.querySelector('#team-standings-groups'),
+  teamPowerRankingsHead: document.querySelector('#team-power-rankings-table thead'),
+  teamPowerRankingsBody: document.querySelector('#team-power-rankings-table tbody'),
   picksHead: document.querySelector('#picks-table thead'),
   picksBody: document.querySelector('#picks-table tbody'),
   spotlight: document.querySelector('#spotlight'),
@@ -124,6 +128,7 @@ async function init() {
 
   state.members = picksData.members;
   state.groups = picksData.groups;
+  state.worldRankings = buildWorldRankings(picksData.worldRankings?.teams ?? {});
   state.events = buildEvents(scoreboardData.events ?? [], picksData.groups);
   state.loadedAt = new Date();
 
@@ -153,6 +158,16 @@ function buildOwnership(groups) {
   return ownership;
 }
 
+function buildWorldRankings(rankings) {
+  const mapped = new Map();
+
+  for (const [team, rank] of Object.entries(rankings)) {
+    mapped.set(normalizeTeamName(team), Number(rank));
+  }
+
+  return mapped;
+}
+
 function buildEvents(events, groups) {
   const ownership = buildOwnership(groups);
 
@@ -174,6 +189,7 @@ function buildEvents(events, groups) {
         name: event.name,
         shortName: event.shortName,
         stage: event.season?.slug?.replaceAll('-', ' ') ?? 'match',
+        stageSlug: event.season?.slug ?? 'match',
         venue: competition.venue?.fullName ?? 'TBD venue',
         city: competition.venue?.address?.city ?? '',
         status: competition.status?.type?.state ?? 'pre',
@@ -288,6 +304,7 @@ function render() {
   renderMemberSummary();
   renderStandings();
   renderTeamStandings();
+  renderTeamPowerRankings();
   renderSpotlight(events);
   renderFixtures(events);
 }
@@ -439,6 +456,61 @@ function calculateTeamStandings() {
   ]);
 }
 
+function renderTeamPowerRankings() {
+  const rows = getTeamPowerRankings();
+
+  els.teamPowerRankingsHead.innerHTML = `
+    <tr>
+      <th scope="col">World rank</th>
+      <th scope="col">Team</th>
+      <th scope="col">Family member</th>
+      <th scope="col">Group</th>
+    </tr>
+  `;
+
+  els.teamPowerRankingsBody.innerHTML = rows
+    .map(
+      (row) => `
+        <tr>
+          <td><strong class="standing-rank">${formatWorldRank(row.rank)}</strong></td>
+          <td>
+            <div class="standing-member">
+              ${row.logo ? `<img class="standing-team-logo" src="${row.logo}" alt="${row.team} logo" loading="lazy" />` : renderFlag(row.team)}
+              <strong>${row.team}</strong>
+            </div>
+          </td>
+          <td class="standing-owner">${row.member}</td>
+          <td><strong>Group ${row.group}</strong></td>
+        </tr>
+      `,
+    )
+    .join('');
+}
+
+function getTeamPowerRankings() {
+  return state.groups
+    .flatMap((group) =>
+      Object.entries(group.picks).map(([member, team]) => ({
+        member,
+        team,
+        group: group.group,
+        rank: state.worldRankings.get(normalizeTeamName(team)),
+        logo: findTeamLogo(team),
+      })),
+    )
+    .sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity) || a.team.localeCompare(b.team));
+}
+
+function findTeamLogo(teamName) {
+  const key = normalizeTeamName(teamName);
+  const event = state.events.find((item) =>
+    [item.home, item.away].some((team) => normalizeTeamName(team.name) === key && team.logo),
+  );
+  const team = [event?.home, event?.away].find((item) => normalizeTeamName(item?.name) === key && item.logo);
+
+  return team?.logo ?? '';
+}
+
 function createStanding(identity) {
   return {
     ...identity,
@@ -483,6 +555,24 @@ function formatGoalDifference(value) {
   return value > 0 ? `+${value}` : String(value);
 }
 
+function formatWorldRank(rank) {
+  return rank ? `#${rank}` : '—';
+}
+
+function formatProbability(value) {
+  if (value <= 0) return '0%';
+  if (value < 0.005) return '<1%';
+
+  return new Intl.NumberFormat(undefined, {
+    style: 'percent',
+    maximumFractionDigits: value < 0.1 ? 1 : 0,
+  }).format(value);
+}
+
+function formatPercentageWidth(value) {
+  return `${Math.max(0, Math.min(100, value * 100))}%`;
+}
+
 function getFilteredEvents() {
   return state.events.filter((event) => {
     const matchesMember =
@@ -500,8 +590,11 @@ function getFilteredEvents() {
 }
 
 function renderMemberSummary() {
+  const championshipProbabilities = calculateChampionshipProbabilities();
+
   els.memberSummary.innerHTML = state.members
     .map((member) => {
+      const forecast = championshipProbabilities.get(member);
       const games = state.events.filter((event) =>
         [...event.home.owners, ...event.away.owners].some((owner) => owner.member === member),
       );
@@ -531,6 +624,16 @@ function renderMemberSummary() {
               <span class="muted">Played</span>
               <strong>${completedGames}</strong>
             </div>
+            <div>
+              <span class="muted">Title</span>
+              <strong>${formatProbability(forecast.probability)}</strong>
+            </div>
+          </div>
+          <div class="championship-forecast">
+            <div class="forecast-bar" aria-label="${member} championship probability ${formatProbability(forecast.probability)}">
+              <span style="width: ${formatPercentageWidth(forecast.probability)}"></span>
+            </div>
+            <p>${renderForecastNote(forecast)}</p>
           </div>
           <div class="next-game">
             <p class="muted">Next match</p>
@@ -541,6 +644,111 @@ function renderMemberSummary() {
       `;
     })
     .join('');
+}
+
+function calculateChampionshipProbabilities() {
+  const eliminatedTeams = calculateEliminatedTeams();
+  const forecasts = new Map();
+  let totalScore = 0;
+
+  for (const member of state.members) {
+    const teams = getMemberTeams(member).map((team) => {
+      const rank = state.worldRankings.get(normalizeTeamName(team));
+      const eliminated = eliminatedTeams.has(normalizeTeamName(team));
+      const strength = rank && !eliminated ? calculateRankingStrength(rank) : 0;
+
+      return { team, rank, eliminated, strength };
+    });
+
+    const score = teams.reduce((sum, team) => sum + team.strength, 0);
+    totalScore += score;
+    forecasts.set(member, {
+      member,
+      teams,
+      score,
+      probability: 0,
+      topTeam: getTopChampionshipTeam(teams),
+      survivingTeams: teams.filter((team) => !team.eliminated).length,
+    });
+  }
+
+  for (const forecast of forecasts.values()) {
+    forecast.probability = totalScore > 0 ? forecast.score / totalScore : 0;
+  }
+
+  return forecasts;
+}
+
+function calculateRankingStrength(rank) {
+  return Math.exp(-CHAMPIONSHIP_RANK_DECAY * (rank - 1));
+}
+
+function calculateEliminatedTeams() {
+  const eliminated = new Set();
+
+  for (const event of state.events) {
+    if (!event.completed || !isChampionshipKnockoutStage(event.stageSlug)) continue;
+
+    if (event.home.winner) eliminated.add(normalizeTeamName(event.away.name));
+    if (event.away.winner) eliminated.add(normalizeTeamName(event.home.name));
+  }
+
+  const groupAdvancers = calculateGroupAdvancers();
+  if (groupAdvancers) {
+    for (const group of state.groups) {
+      for (const team of Object.values(group.picks)) {
+        const key = normalizeTeamName(team);
+        if (!groupAdvancers.has(key)) {
+          eliminated.add(key);
+        }
+      }
+    }
+  }
+
+  return eliminated;
+}
+
+function calculateGroupAdvancers() {
+  const groupStageEvents = state.events.filter((event) => event.stageSlug === 'group-stage');
+  if (!groupStageEvents.length || groupStageEvents.some((event) => !event.completed)) return null;
+
+  const standingsByGroup = calculateTeamStandings();
+  const advancers = new Set();
+  const thirdPlaceTeams = [];
+
+  for (const [, standings] of standingsByGroup) {
+    standings.slice(0, 2).forEach((standing) => advancers.add(normalizeTeamName(standing.team)));
+    if (standings[2]) thirdPlaceTeams.push(standings[2]);
+  }
+
+  thirdPlaceTeams
+    .sort(compareStandings)
+    .slice(0, 8)
+    .forEach((standing) => advancers.add(normalizeTeamName(standing.team)));
+
+  return advancers;
+}
+
+function isChampionshipKnockoutStage(stageSlug) {
+  return ['round-of-32', 'round-of-16', 'quarterfinals', 'semifinals', 'final'].includes(stageSlug);
+}
+
+function getMemberTeams(member) {
+  return state.groups.map((group) => group.picks[member]).filter(Boolean);
+}
+
+function getTopChampionshipTeam(teams) {
+  return [...teams]
+    .filter((team) => team.strength > 0)
+    .sort((a, b) => b.strength - a.strength || a.team.localeCompare(b.team))[0];
+}
+
+function renderForecastNote(forecast) {
+  if (!forecast.topTeam) {
+    return 'No teams left in the title race';
+  }
+
+  return `<strong>${forecast.topTeam.team}</strong> leads the path · FIFA rank ${forecast.topTeam.rank}`;
 }
 
 function renderSpotlight(events) {
