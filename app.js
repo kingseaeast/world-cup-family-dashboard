@@ -557,7 +557,6 @@ function renderSpotlight(events) {
 
   els.spotlight.innerHTML = spotlightGames
     .map((event, index) => {
-      const family = [...event.home.owners, ...event.away.owners];
       const time = formatSpotlightTime(event.date);
 
       return `
@@ -579,13 +578,6 @@ function renderSpotlight(events) {
             ${renderSpotlightTeam(event.home)}
           </div>
 
-          <div class="spotlight-family">
-            <p>Family involved</p>
-            <div class="spotlight-family-list">
-              ${family.map((owner) => renderSpotlightOwner(owner)).join('')}
-            </div>
-          </div>
-
           <p class="spotlight-venue">${event.venue}${event.city ? ` · ${event.city}` : ''}</p>
         </article>
       `;
@@ -598,6 +590,7 @@ function renderSpotlightTeam(team) {
     <div class="spotlight-team">
       <img src="${team.logo}" alt="${team.name} logo" loading="lazy" />
       <strong>${team.name}</strong>
+      ${team.owners.length ? `<div class="spotlight-team-owners">${team.owners.map((owner) => renderSpotlightOwner(owner)).join('')}</div>` : ''}
     </div>
   `;
 }
@@ -606,10 +599,7 @@ function renderSpotlightOwner(owner) {
   return `
     <div class="spotlight-owner">
       ${renderMemberThumbnail(owner.member, 'spotlight-owner-avatar')}
-      <span>
-        <strong>${owner.member}</strong>
-        <small>${owner.team}</small>
-      </span>
+      <strong>${owner.member}</strong>
     </div>
   `;
 }
