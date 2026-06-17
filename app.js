@@ -104,6 +104,7 @@ const state = {
   events: [],
   worldRankings: new Map(),
   championshipForecast: null,
+  apiOddsForecast: null,
   titleOdds: null,
   loadedAt: null,
 };
@@ -155,7 +156,8 @@ async function init() {
   state.groups = picksData.groups;
   state.worldRankings = buildWorldRankings(picksData.worldRankings?.teams ?? {});
   state.events = buildEvents(scoreboardData.events ?? [], picksData.groups);
-  state.titleOdds = await loadTitleOddsForForecast();
+  state.titleOdds = await loadTitleOdds();
+  state.apiOddsForecast = calculateApiOddsForecast(getPickedTeamRecords());
   state.championshipForecast = calculateChampionshipForecast();
   state.loadedAt = new Date();
 
@@ -164,17 +166,19 @@ async function init() {
   render();
 }
 
-async function loadTitleOddsForForecast() {
-  if (CHAMPIONSHIP_FORECAST_METHOD !== FORECAST_METHODS.API_ODDS) {
+async function loadTitleOdds() {
+  try {
+    const response = await fetch(TITLE_ODDS_URL);
+    if (!response.ok) {
+      console.warn(`Title odds unavailable: ${response.status}`);
+      return null;
+    }
+
+    return response.json();
+  } catch (error) {
+    console.warn('Title odds unavailable', error);
     return null;
   }
-
-  const response = await fetch(TITLE_ODDS_URL);
-  if (!response.ok) {
-    throw new Error('failed to load title odds');
-  }
-
-  return response.json();
 }
 
 function normalizeTeamName(name) {
@@ -505,6 +509,7 @@ function renderTeamPowerRankings(championshipForecast) {
       <th scope="col">World rank</th>
       <th scope="col">Team</th>
       <th scope="col">Title</th>
+      <th scope="col">API odds</th>
       <th scope="col">Outlook</th>
       <th scope="col">Family member</th>
       <th scope="col">Group</th>
@@ -523,6 +528,7 @@ function renderTeamPowerRankings(championshipForecast) {
             </div>
           </td>
           <td><strong class="standing-points">${formatTitleProbability(row.titleProbability)}</strong></td>
+          <td><strong class="standing-points api-odds-value">${formatTitleProbability(row.apiTitleProbability)}</strong></td>
           <td class="standing-owner power-outlook">${row.reason}</td>
           <td class="standing-owner">${row.member}</td>
           <td><strong>Group ${row.group}</strong></td>
@@ -542,6 +548,7 @@ function getTeamPowerRankings(championshipForecast) {
         rank: state.worldRankings.get(normalizeTeamName(team)),
         logo: findTeamLogo(team),
         titleProbability: championshipForecast.teams.get(normalizeTeamName(team))?.probability ?? 0,
+        apiTitleProbability: state.apiOddsForecast?.teams.get(normalizeTeamName(team))?.probability ?? 0,
         reason: championshipForecast.teams.get(normalizeTeamName(team))?.reason ?? 'No projection',
       })),
     )
