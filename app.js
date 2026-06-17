@@ -524,13 +524,14 @@ function calculateTeamStandings() {
 
 function renderTeamPowerRankings(championshipForecast) {
   const rows = getTeamPowerRankings(championshipForecast);
+  const kalshiOddsUrl = state.titleOdds?.sourceUrl ?? 'https://kalshi.com/markets/kxmenworldcup';
 
   els.teamPowerRankingsHead.innerHTML = `
     <tr>
       <th scope="col">World rank</th>
       <th scope="col">Team</th>
       <th scope="col">Title</th>
-      <th scope="col">API odds</th>
+      <th scope="col"><a class="table-source-link" href="${kalshiOddsUrl}" target="_blank" rel="noopener noreferrer">Kalshi odds</a></th>
       <th scope="col">Outlook</th>
       <th scope="col">Family member</th>
       <th scope="col">Group</th>

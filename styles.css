@@ -555,6 +555,21 @@ details[open] .when-open {
   letter-spacing: 0.08em;
 }
 
+.table-source-link,
+.inline-link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.table-source-link:hover,
+.table-source-link:focus-visible,
+.inline-link:hover,
+.inline-link:focus-visible {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .standing-member {
   display: flex;
   align-items: center;

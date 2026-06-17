@@ -255,7 +255,7 @@ Example:
 
 The API strategy shows that the number is market-implied, including vendor and update date when present.
 
-The power rankings table shows each team's active model title probability, Kalshi API odds, and active model outlook. Family overview cards show the family member's leading team and why it is driving their odds.
+The power rankings table shows each team's active model title probability, linked Kalshi odds, and active model outlook. Family overview cards show the family member's leading team and why it is driving their odds.
 
 ## Runtime Behavior
 
