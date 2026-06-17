@@ -99,6 +99,7 @@ const MEMBER_THUMBNAILS = {
 const state = {
   memberFilter: 'All',
   statusFilter: 'all',
+  countryFilter: '',
   members: [],
   groups: [],
   events: [],
@@ -115,6 +116,7 @@ const els = {
   completedGames: document.querySelector('#completed-games'),
   memberFilters: document.querySelector('#member-filters'),
   statusFilters: document.querySelector('#status-filters'),
+  countryFilter: document.querySelector('#country-filter'),
   memberSummary: document.querySelector('#member-summary'),
   standingsHead: document.querySelector('#standings-table thead'),
   standingsBody: document.querySelector('#standings-table tbody'),
@@ -311,6 +313,12 @@ function renderFilters() {
       render();
     });
   });
+
+  els.countryFilter.value = state.countryFilter;
+  els.countryFilter.oninput = (event) => {
+    state.countryFilter = event.target.value;
+    render();
+  };
 }
 
 function renderPicksTable() {
@@ -662,7 +670,12 @@ function getFilteredEvents() {
       (state.statusFilter === 'upcoming' && event.status === 'pre') ||
       (state.statusFilter === 'completed' && event.completed);
 
-    return matchesMember && matchesStatus;
+    const countryQuery = normalizeTeamName(state.countryFilter);
+    const matchesCountry =
+      !countryQuery ||
+      [event.home.name, event.away.name].some((team) => normalizeTeamName(team).includes(countryQuery));
+
+    return matchesMember && matchesStatus && matchesCountry;
   });
 }
 
