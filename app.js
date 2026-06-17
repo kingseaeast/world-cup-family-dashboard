@@ -161,6 +161,7 @@ async function init() {
   state.championshipForecast = calculateChampionshipForecast();
   state.loadedAt = new Date();
 
+  setupSectionIndex();
   renderFilters();
   renderPicksTable();
   render();
@@ -200,6 +201,18 @@ function buildOwnership(groups) {
   }
 
   return ownership;
+}
+
+function setupSectionIndex() {
+  document.querySelectorAll('.section-index a').forEach((link) => {
+    link.addEventListener('click', () => {
+      const target = document.querySelector(link.getAttribute('href'));
+      if (!target) return;
+
+      const details = target.matches('details') ? target : target.closest('details');
+      if (details) details.open = true;
+    });
+  });
 }
 
 function buildWorldRankings(rankings) {

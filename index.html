@@ -11,33 +11,46 @@
     <link rel="stylesheet" href="./styles.css?v=__BUILD_VERSION__" />
   </head>
   <body>
-    <div class="page-shell">
-      <header class="hero">
-        <div>
-          <p class="eyebrow">2026 FIFA World Cup</p>
-          <h1>Family sweepstakes dashboard</h1>
-          <p class="hero-copy">
-            Every match, every pick, and exactly whose team is on the line.
-          </p>
-        </div>
-        <div class="hero-meta">
-          <div class="meta-card">
-            <span class="meta-label">Tournament games</span>
-            <strong id="total-games">—</strong>
+    <div class="dashboard-layout">
+      <nav class="section-index" aria-label="Dashboard sections">
+        <p class="section-label">Index</p>
+        <a href="#dashboard-overview">Overview</a>
+        <a href="#spotlight-section">Spotlight</a>
+        <a href="#member-summary">Family overview</a>
+        <a href="#standings-details">Standings</a>
+        <a href="#team-standings-details">Team standings</a>
+        <a href="#team-power-rankings-details">Power rankings</a>
+        <a href="#all-picks-details">Group selections</a>
+        <a href="#fixtures-section">Fixtures</a>
+      </nav>
+
+      <div class="page-shell">
+        <header class="hero" id="dashboard-overview">
+          <div>
+            <p class="eyebrow">2026 FIFA World Cup</p>
+            <h1>Family sweepstakes dashboard</h1>
+            <p class="hero-copy">
+              Every match, every pick, and exactly whose team is on the line.
+            </p>
           </div>
-          <div class="meta-card">
-            <span class="meta-label">Live now</span>
-            <strong id="live-games">—</strong>
+          <div class="hero-meta">
+            <div class="meta-card">
+              <span class="meta-label">Tournament games</span>
+              <strong id="total-games">—</strong>
+            </div>
+            <div class="meta-card">
+              <span class="meta-label">Live now</span>
+              <strong id="live-games">—</strong>
+            </div>
+            <div class="meta-card">
+              <span class="meta-label">Completed</span>
+              <strong id="completed-games">—</strong>
+            </div>
           </div>
-          <div class="meta-card">
-            <span class="meta-label">Completed</span>
-            <strong id="completed-games">—</strong>
-          </div>
-        </div>
-      </header>
+        </header>
 
       <main>
-        <section class="panel">
+        <section class="panel" id="spotlight-section">
           <div class="section-heading">
             <div>
               <p class="section-label">What matters next</p>
@@ -133,7 +146,7 @@
           </details>
         </section>
 
-        <section class="panel">
+        <section class="panel" id="fixtures-section">
           <div class="section-heading fixtures-heading">
             <div>
               <p class="section-label">Match tracker</p>
@@ -157,6 +170,7 @@
           <div id="fixtures" class="fixtures-groups"></div>
         </section>
       </main>
+      </div>
     </div>
 
     <template id="match-card-template">
