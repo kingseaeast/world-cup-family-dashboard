@@ -1263,11 +1263,7 @@ function createSeededRandom(seed) {
 }
 
 function renderSpotlight(events) {
-  const spotlightGames = [...events]
-    .filter((event) => state.statusFilter !== 'completed' ? !event.completed : true)
-    .filter((event) => [...event.home.owners, ...event.away.owners].length)
-    .sort((a, b) => scoreEvent(a) - scoreEvent(b))
-    .slice(0, 3);
+  const spotlightGames = getSpotlightGames(events);
 
   if (!spotlightGames.length) {
     els.spotlight.innerHTML = '<div class="spotlight-card spotlight-empty"><p>No matches in this filter yet.</p></div>';
@@ -1282,7 +1278,7 @@ function renderSpotlight(events) {
         <article class="spotlight-card ${index === 0 ? 'spotlight-card-next' : ''}">
           <div class="spotlight-time">
             <div>
-              <span class="spotlight-kicker">${event.status === 'in' ? 'Live now' : event.completed ? 'Final' : index === 0 ? 'Next up' : time.relativeDay}</span>
+              <span class="spotlight-kicker">${labelForSpotlight(event, index, time)}</span>
               <strong>${time.clock}</strong>
             </div>
             <div class="spotlight-date">
@@ -1292,9 +1288,9 @@ function renderSpotlight(events) {
           </div>
 
           <div class="spotlight-matchup">
-            ${renderSpotlightTeam(event.away)}
-            <span class="spotlight-vs">vs</span>
-            ${renderSpotlightTeam(event.home)}
+            ${renderSpotlightTeam(event.away, event)}
+            ${renderSpotlightCenter(event)}
+            ${renderSpotlightTeam(event.home, event)}
           </div>
 
           <p class="spotlight-venue">${event.venue}${event.city ? ` · ${event.city}` : ''}</p>
@@ -1304,9 +1300,76 @@ function renderSpotlight(events) {
     .join('');
 }
 
-function renderSpotlightTeam(team) {
+function getSpotlightGames(events) {
+  const interestedEvents = events.filter((event) => [...event.home.owners, ...event.away.owners].length);
+
+  if (state.statusFilter === 'completed') {
+    return interestedEvents
+      .filter((event) => event.completed)
+      .sort((a, b) => b.date - a.date)
+      .slice(0, 3);
+  }
+
+  if (state.statusFilter === 'live') {
+    return interestedEvents
+      .filter((event) => event.status === 'in')
+      .sort((a, b) => a.date - b.date)
+      .slice(0, 3);
+  }
+
+  if (state.statusFilter === 'upcoming') {
+    return interestedEvents
+      .filter((event) => !event.completed && event.status !== 'in')
+      .sort((a, b) => a.date - b.date)
+      .slice(0, 3);
+  }
+
+  const liveGames = interestedEvents
+    .filter((event) => event.status === 'in')
+    .sort((a, b) => a.date - b.date);
+  const latestCompletedGame = interestedEvents
+    .filter((event) => event.completed)
+    .sort((a, b) => b.date - a.date)
+    .slice(0, 1);
+  const upcomingGames = interestedEvents
+    .filter((event) => !event.completed && event.status !== 'in')
+    .sort((a, b) => a.date - b.date);
+
+  return uniqueEvents([...liveGames, ...latestCompletedGame, ...upcomingGames]).slice(0, 3);
+}
+
+function uniqueEvents(events) {
+  const seen = new Set();
+
+  return events.filter((event) => {
+    if (seen.has(event.id)) return false;
+    seen.add(event.id);
+    return true;
+  });
+}
+
+function labelForSpotlight(event, index, time) {
+  if (event.status === 'in') return 'Live now';
+  if (event.completed) return state.statusFilter === 'completed' ? 'Final' : 'Latest result';
+  return index === 0 ? 'Next up' : time.relativeDay;
+}
+
+function renderSpotlightCenter(event) {
+  if (event.status !== 'in' && !event.completed) {
+    return '<span class="spotlight-vs">vs</span>';
+  }
+
   return `
-    <div class="spotlight-team">
+    <div class="spotlight-score-block">
+      <strong class="spotlight-scoreline">${formatScore(event.away.score)}-${formatScore(event.home.score)}</strong>
+      <span>${event.status === 'in' ? 'Live score' : 'Final score'}</span>
+    </div>
+  `;
+}
+
+function renderSpotlightTeam(team, event) {
+  return `
+    <div class="spotlight-team ${event.completed && team.winner ? 'spotlight-team-winner' : ''}">
       <img src="${team.logo}" alt="${team.name} logo" loading="lazy" />
       <strong>${team.name}</strong>
       ${team.owners.length ? `<div class="spotlight-team-owners">${team.owners.map((owner) => renderSpotlightOwner(owner)).join('')}</div>` : ''}
@@ -1400,6 +1463,10 @@ function renderTeamRows(event) {
       `,
     )
     .join('');
+}
+
+function formatScore(score) {
+  return score === undefined || score === null || score === '' ? '0' : score;
 }
 
 function renderInterest() {
@@ -1563,10 +1630,4 @@ function toTitleCase(value) {
     .split(' ')
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(' ');
-}
-
-function scoreEvent(event) {
-  if (event.status === 'in') return -1;
-  if (!event.completed) return event.date.getTime();
-  return event.date.getTime() + 10 ** 12;
 }

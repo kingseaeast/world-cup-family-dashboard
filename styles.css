@@ -441,6 +441,30 @@ h1 {
   text-transform: uppercase;
 }
 
+.spotlight-score-block {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  min-width: 58px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.spotlight-scoreline {
+  color: var(--text);
+  font-size: 1.45rem;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.spotlight-team-winner > strong {
+  color: var(--good);
+}
+
 .spotlight-owner {
   display: inline-flex;
   align-items: center;
