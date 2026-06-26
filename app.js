@@ -88,6 +88,13 @@ const KNOCKOUT_PATH_ORDER = {
   runnerUp: 1,
   thirdPlace: 2,
 };
+const KNOCKOUT_ROUNDS = [
+  { key: 'round-of-32', label: 'Round of 32' },
+  { key: 'round-of-16', label: 'Round of 16' },
+  { key: 'quarterfinals', label: 'Quarterfinals' },
+  { key: 'semifinals', label: 'Semifinals' },
+  { key: 'final', label: 'Final' },
+];
 
 const MEMBER_THUMBNAILS = {
   Nathan: './assets/family/nathan.jpg',
@@ -121,6 +128,7 @@ const els = {
   standingsHead: document.querySelector('#standings-table thead'),
   standingsBody: document.querySelector('#standings-table tbody'),
   teamStandingsGroups: document.querySelector('#team-standings-groups'),
+  knockoutTree: document.querySelector('#knockout-tree'),
   teamPowerRankingsHead: document.querySelector('#team-power-rankings-table thead'),
   teamPowerRankingsBody: document.querySelector('#team-power-rankings-table tbody'),
   picksHead: document.querySelector('#picks-table thead'),
@@ -370,6 +378,7 @@ function render() {
   renderMemberSummary(championshipForecast);
   renderStandings();
   renderTeamStandings();
+  renderKnockoutTree();
   renderTeamPowerRankings(championshipForecast);
   renderSpotlight(events);
   renderFixtures(events);
@@ -520,6 +529,192 @@ function calculateTeamStandings() {
       .filter((standing) => standing.group === group.group)
       .sort(compareStandings),
   ]);
+}
+
+function renderKnockoutTree() {
+  const rounds = buildProjectedKnockoutBracket();
+
+  if (!rounds.length) {
+    els.knockoutTree.innerHTML = '<p class="muted">Knockout projections will appear once team data loads.</p>';
+    return;
+  }
+
+  els.knockoutTree.innerHTML = rounds
+    .map(
+      (round) => `
+        <section class="bracket-round" aria-label="${round.label}">
+          <div class="bracket-round-heading">
+            <p class="section-label">${round.matches.length} ${round.matches.length === 1 ? 'match' : 'matches'}</p>
+            <h3>${round.label}</h3>
+          </div>
+          <div class="bracket-match-list">
+            ${round.matches.map((match) => renderBracketMatch(match, round.key)).join('')}
+          </div>
+        </section>
+      `,
+    )
+    .join('');
+}
+
+function buildProjectedKnockoutBracket() {
+  let pairs = buildInitialKnockoutPairs(calculateProjectedQualifiers());
+  const rounds = [];
+
+  for (const round of KNOCKOUT_ROUNDS) {
+    if (!pairs.length) break;
+
+    const matches = pairs.map(([teamA, teamB], index) => ({
+      id: `${round.key}-${index + 1}`,
+      teams: [teamA, teamB],
+      winner: getProjectedKnockoutWinner(teamA, teamB),
+    }));
+
+    rounds.push({ ...round, matches });
+    pairs = pairAdjacentTeams(matches.map((match) => match.winner).filter(Boolean));
+  }
+
+  return rounds;
+}
+
+function calculateProjectedQualifiers() {
+  const projectedStandings = calculateProjectedGroupStandings();
+  const qualifiers = [];
+  const thirdPlaceTeams = [];
+
+  for (const group of state.groups) {
+    const standings = projectedStandings.get(group.group) ?? [];
+    const winner = standings[0];
+    const runnerUp = standings[1];
+    const thirdPlace = standings[2];
+
+    if (winner) qualifiers.push(asKnockoutTeam(winner, 'groupWinner', `Group ${group.group} winner`));
+    if (runnerUp) qualifiers.push(asKnockoutTeam(runnerUp, 'runnerUp', `Group ${group.group} runner-up`));
+    if (thirdPlace) thirdPlaceTeams.push(asKnockoutTeam(thirdPlace, 'thirdPlace', `Group ${group.group} third`));
+  }
+
+  thirdPlaceTeams.sort(compareProjectedGroupTeams).slice(0, 8).forEach((team) => qualifiers.push(team));
+
+  return qualifiers;
+}
+
+function calculateProjectedGroupStandings() {
+  const standings = new Map();
+  const byTeam = new Map();
+
+  for (const record of getPickedTeamRecords()) {
+    const standing = createStanding({
+      ...record,
+      owners: [{ member: record.member, group: record.group, team: record.team }],
+    });
+    const groupStandings = standings.get(record.group) ?? [];
+    groupStandings.push(standing);
+    standings.set(record.group, groupStandings);
+    byTeam.set(record.key, standing);
+  }
+
+  for (const event of state.events.filter((item) => item.stageSlug === 'group-stage' && item.completed)) {
+    const home = byTeam.get(normalizeTeamName(event.home.name));
+    const away = byTeam.get(normalizeTeamName(event.away.name));
+    if (!home || !away) continue;
+
+    recordResult(home, event.home, event.away);
+    recordResult(away, event.away, event.home);
+  }
+
+  for (const [group, groupStandings] of standings) {
+    standings.set(group, groupStandings.sort(compareProjectedGroupTeams));
+  }
+
+  return standings;
+}
+
+function compareProjectedGroupTeams(a, b) {
+  return (
+    b.points - a.points ||
+    b.goalDifference - a.goalDifference ||
+    b.goalsFor - a.goalsFor ||
+    (a.rank ?? Infinity) - (b.rank ?? Infinity) ||
+    a.team.localeCompare(b.team)
+  );
+}
+
+function asKnockoutTeam(team, path, seedLabel) {
+  return {
+    ...team,
+    path,
+    seedLabel,
+    titleProbability: state.championshipForecast?.teams.get(team.key)?.probability ?? 0,
+  };
+}
+
+function getProjectedKnockoutWinner(teamA, teamB) {
+  if (!teamA) return teamB;
+  if (!teamB) return teamA;
+
+  const completedWinnerKey = findCompletedKnockoutWinnerKey(teamA, teamB);
+  if (completedWinnerKey) {
+    return teamA.key === completedWinnerKey ? teamA : teamB;
+  }
+
+  const teamAStrength = calculateKnockoutMatchStrength(teamA.rank);
+  const teamBStrength = calculateKnockoutMatchStrength(teamB.rank);
+
+  if (teamAStrength === teamBStrength) {
+    return (teamA.rank ?? Infinity) <= (teamB.rank ?? Infinity) ? teamA : teamB;
+  }
+
+  return teamAStrength > teamBStrength ? teamA : teamB;
+}
+
+function findCompletedKnockoutWinnerKey(teamA, teamB) {
+  const event = state.events.find((item) => {
+    if (!item.completed || !isChampionshipKnockoutStage(item.stageSlug)) return false;
+
+    const homeKey = normalizeTeamName(item.home.name);
+    const awayKey = normalizeTeamName(item.away.name);
+    return [homeKey, awayKey].includes(teamA.key) && [homeKey, awayKey].includes(teamB.key);
+  });
+
+  if (!event) return '';
+  return event.home.winner ? normalizeTeamName(event.home.name) : normalizeTeamName(event.away.name);
+}
+
+function renderBracketMatch(match, roundKey) {
+  const winnerKey = match.winner?.key ?? '';
+  const isFinal = roundKey === 'final';
+
+  return `
+    <article class="bracket-match ${isFinal ? 'bracket-match-final' : ''}">
+      <div class="bracket-match-label">${match.id.replaceAll('-', ' ')}</div>
+      <div class="bracket-teams">
+        ${match.teams.map((team) => renderBracketTeam(team, winnerKey)).join('')}
+      </div>
+      ${isFinal && match.winner ? `<div class="bracket-champion">Projected champion: <strong>${match.winner.team}</strong></div>` : ''}
+    </article>
+  `;
+}
+
+function renderBracketTeam(team, winnerKey) {
+  if (!team) {
+    return '<div class="bracket-team bracket-team-empty"><span>Bye</span></div>';
+  }
+
+  const isWinner = team.key === winnerKey;
+  const titleProbability = team.titleProbability ? ` · ${formatTitleProbability(team.titleProbability)} title` : '';
+
+  return `
+    <div class="bracket-team ${isWinner ? 'bracket-team-winner' : ''}">
+      ${team.logo ? `<img class="bracket-team-logo" src="${team.logo}" alt="${team.team} logo" loading="lazy" />` : renderFlag(team.team)}
+      <div class="bracket-team-copy">
+        <strong>${team.team}</strong>
+        <span>${team.seedLabel}${titleProbability}</span>
+      </div>
+      <div class="bracket-owner" title="${team.member}">
+        ${renderMemberThumbnail(team.member, 'bracket-owner-avatar')}
+        <span>${team.member}</span>
+      </div>
+    </div>
+  `;
 }
 
 function renderTeamPowerRankings(championshipForecast) {
@@ -1129,7 +1324,9 @@ function pairAdjacentTeams(teams) {
 function compareKnockoutSeeds(a, b) {
   return (
     KNOCKOUT_PATH_ORDER[a.path] - KNOCKOUT_PATH_ORDER[b.path] ||
-    compareStandings(a, b) ||
+    b.points - a.points ||
+    b.goalDifference - a.goalDifference ||
+    b.goalsFor - a.goalsFor ||
     (a.rank ?? Infinity) - (b.rank ?? Infinity) ||
     a.team.localeCompare(b.team)
   );

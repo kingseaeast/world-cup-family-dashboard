@@ -84,6 +84,7 @@ body {
 #member-summary,
 #standings-details,
 #team-standings-details,
+#knockout-details,
 #team-power-rankings-details,
 #all-picks-details,
 #fixtures-section {
@@ -619,6 +620,173 @@ details[open] .when-open {
   border-bottom: 1px solid rgba(148, 163, 184, 0.12);
 }
 
+.knockout-tree {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(300px, 1fr);
+  gap: 18px;
+  overflow-x: auto;
+  padding: 4px 4px 14px;
+}
+
+.bracket-round {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bracket-round-heading {
+  padding: 12px 14px;
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  border-radius: 16px;
+  background: rgba(9, 18, 32, 0.96);
+}
+
+.bracket-round-heading h3 {
+  font-size: 1.05rem;
+}
+
+.bracket-match-list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 12px;
+}
+
+.bracket-match {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.13);
+  border-radius: 16px;
+  background: rgba(9, 18, 32, 0.76);
+}
+
+.bracket-round:not(:last-child) .bracket-match::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -19px;
+  width: 18px;
+  height: 1px;
+  background: rgba(125, 211, 252, 0.28);
+}
+
+.bracket-match-final {
+  border-color: rgba(251, 191, 36, 0.28);
+  box-shadow: 0 14px 34px rgba(251, 191, 36, 0.08);
+}
+
+.bracket-match-label {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bracket-teams {
+  display: grid;
+  gap: 7px;
+}
+
+.bracket-team {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  gap: 9px;
+  align-items: center;
+  min-height: 54px;
+  padding: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 12px;
+  background: rgba(148, 163, 184, 0.06);
+}
+
+.bracket-team-winner {
+  border-color: rgba(74, 222, 128, 0.32);
+  background: rgba(74, 222, 128, 0.1);
+}
+
+.bracket-team-empty {
+  grid-template-columns: 1fr;
+  color: var(--muted);
+}
+
+.bracket-team-logo {
+  width: 32px;
+  height: 32px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  object-fit: contain;
+}
+
+.bracket-team .country-flag {
+  width: 32px;
+  height: 24px;
+  margin-bottom: 0;
+}
+
+.bracket-team-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.bracket-team-copy strong,
+.bracket-team-copy span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bracket-team-copy strong {
+  font-size: 0.92rem;
+  line-height: 1.15;
+}
+
+.bracket-team-copy span {
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+
+.bracket-owner {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.bracket-owner-avatar {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(167, 139, 250, 0.34);
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+.bracket-owner span {
+  max-width: 58px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bracket-champion {
+  padding: 9px 10px;
+  border-radius: 12px;
+  background: rgba(251, 191, 36, 0.12);
+  color: #fde68a;
+  font-size: 0.84rem;
+}
+
 .team-standings-table th,
 .team-standings-table td {
   padding: 12px 10px;
@@ -888,6 +1056,7 @@ details[open] .when-open {
   #member-summary,
   #standings-details,
   #team-standings-details,
+  #knockout-details,
   #team-power-rankings-details,
   #all-picks-details,
   #fixtures-section {
@@ -942,5 +1111,13 @@ details[open] .when-open {
   .team-row img {
     width: 32px;
     height: 32px;
+  }
+
+  .knockout-tree {
+    grid-auto-columns: minmax(280px, 86vw);
+  }
+
+  .bracket-owner span {
+    display: none;
   }
 }
