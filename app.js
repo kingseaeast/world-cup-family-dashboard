@@ -95,6 +95,47 @@ const KNOCKOUT_ROUNDS = [
   { key: 'semifinals', label: 'Semifinals' },
   { key: 'final', label: 'Final' },
 ];
+const ROUND_OF_32_SLOTS = [
+  [{ path: 'runnerUp', group: 'A' }, { path: 'runnerUp', group: 'B' }],
+  [{ path: 'groupWinner', group: 'C' }, { path: 'runnerUp', group: 'F' }],
+  [{ path: 'groupWinner', group: 'E' }, { path: 'thirdPlace', groups: ['A', 'B', 'C', 'D', 'F'] }],
+  [{ path: 'groupWinner', group: 'F' }, { path: 'runnerUp', group: 'C' }],
+  [{ path: 'runnerUp', group: 'E' }, { path: 'runnerUp', group: 'I' }],
+  [{ path: 'groupWinner', group: 'I' }, { path: 'thirdPlace', groups: ['C', 'D', 'F', 'G', 'H'] }],
+  [{ path: 'groupWinner', group: 'A' }, { path: 'thirdPlace', groups: ['C', 'E', 'F', 'H', 'I'] }],
+  [{ path: 'groupWinner', group: 'L' }, { path: 'thirdPlace', groups: ['E', 'H', 'I', 'J', 'K'] }],
+  [{ path: 'groupWinner', group: 'G' }, { path: 'thirdPlace', groups: ['A', 'E', 'H', 'I', 'J'] }],
+  [{ path: 'groupWinner', group: 'D' }, { path: 'thirdPlace', groups: ['B', 'E', 'F', 'I', 'J'] }],
+  [{ path: 'groupWinner', group: 'H' }, { path: 'runnerUp', group: 'J' }],
+  [{ path: 'runnerUp', group: 'K' }, { path: 'runnerUp', group: 'L' }],
+  [{ path: 'groupWinner', group: 'B' }, { path: 'thirdPlace', groups: ['E', 'F', 'G', 'I', 'J'] }],
+  [{ path: 'runnerUp', group: 'D' }, { path: 'runnerUp', group: 'G' }],
+  [{ path: 'groupWinner', group: 'J' }, { path: 'runnerUp', group: 'H' }],
+  [{ path: 'groupWinner', group: 'K' }, { path: 'thirdPlace', groups: ['D', 'E', 'I', 'J', 'L'] }],
+];
+const KNOCKOUT_PAIRINGS = {
+  'round-of-16': [
+    [0, 2],
+    [1, 4],
+    [3, 5],
+    [6, 7],
+    [10, 11],
+    [8, 9],
+    [13, 15],
+    [12, 14],
+  ],
+  quarterfinals: [
+    [0, 1],
+    [4, 5],
+    [2, 3],
+    [6, 7],
+  ],
+  semifinals: [
+    [0, 1],
+    [2, 3],
+  ],
+  final: [[0, 1]],
+};
 
 const MEMBER_THUMBNAILS = {
   Nathan: './assets/family/nathan.jpg',
@@ -557,44 +598,127 @@ function renderKnockoutTree() {
 }
 
 function buildProjectedKnockoutBracket() {
-  let pairs = buildInitialKnockoutPairs(calculateProjectedQualifiers());
-  const rounds = [];
+  const context = buildKnockoutContext();
+  const roundOf32 = buildRoundOf32Matches(context);
+  const rounds = [{ ...KNOCKOUT_ROUNDS[0], matches: roundOf32 }];
+  let previousMatches = roundOf32;
 
-  for (const round of KNOCKOUT_ROUNDS) {
-    if (!pairs.length) break;
+  for (const round of KNOCKOUT_ROUNDS.slice(1)) {
+    const pairings = KNOCKOUT_PAIRINGS[round.key] ?? pairAdjacentTeams(previousMatches.map((match) => match.winner));
+    const matches = pairings.map(([firstIndex, secondIndex], index) => {
+      const teams = [previousMatches[firstIndex]?.winner ?? null, previousMatches[secondIndex]?.winner ?? null];
 
-    const matches = pairs.map(([teamA, teamB], index) => ({
-      id: `${round.key}-${index + 1}`,
-      teams: [teamA, teamB],
-      winner: getProjectedKnockoutWinner(teamA, teamB),
-    }));
+      return {
+        id: `${round.label} ${index + 1}`,
+        teams,
+        winner: getProjectedKnockoutWinner(teams[0], teams[1]),
+      };
+    });
 
     rounds.push({ ...round, matches });
-    pairs = pairAdjacentTeams(matches.map((match) => match.winner).filter(Boolean));
+    previousMatches = matches;
   }
 
   return rounds;
 }
 
-function calculateProjectedQualifiers() {
+function buildKnockoutContext() {
   const projectedStandings = calculateProjectedGroupStandings();
-  const qualifiers = [];
+  const groupSlots = new Map();
+  const teamByKey = new Map();
   const thirdPlaceTeams = [];
 
   for (const group of state.groups) {
     const standings = projectedStandings.get(group.group) ?? [];
-    const winner = standings[0];
-    const runnerUp = standings[1];
-    const thirdPlace = standings[2];
+    const slots = {
+      groupWinner: standings[0] ?? null,
+      runnerUp: standings[1] ?? null,
+      thirdPlace: standings[2] ?? null,
+    };
 
-    if (winner) qualifiers.push(asKnockoutTeam(winner, 'groupWinner', `Group ${group.group} winner`));
-    if (runnerUp) qualifiers.push(asKnockoutTeam(runnerUp, 'runnerUp', `Group ${group.group} runner-up`));
-    if (thirdPlace) thirdPlaceTeams.push(asKnockoutTeam(thirdPlace, 'thirdPlace', `Group ${group.group} third`));
+    groupSlots.set(group.group, slots);
+    standings.forEach((team) => teamByKey.set(team.key, team));
+    if (slots.thirdPlace) thirdPlaceTeams.push(slots.thirdPlace);
   }
 
-  thirdPlaceTeams.sort(compareProjectedGroupTeams).slice(0, 8).forEach((team) => qualifiers.push(team));
+  return {
+    groupSlots,
+    teamByKey,
+    thirdPlaceTeams: thirdPlaceTeams.sort(compareProjectedGroupTeams).slice(0, 8),
+    assignedThirdPlaceKeys: new Set(),
+    roundOf32Events: getKnockoutEvents('round-of-32'),
+  };
+}
 
-  return qualifiers;
+function buildRoundOf32Matches(context) {
+  return ROUND_OF_32_SLOTS.map((slots, index) => {
+    const event = context.roundOf32Events[index];
+    const eventTeams = [event?.home, event?.away];
+    const teams = slots.map((slot, sideIndex) => resolveRoundOf32Team(slot, context, eventTeams[sideIndex]));
+
+    return {
+      id: `Round of 32 ${index + 1}`,
+      teams,
+      winner: getProjectedKnockoutWinner(teams[0], teams[1]),
+    };
+  });
+}
+
+function resolveRoundOf32Team(slot, context, eventTeam) {
+  const actualTeam = resolveActualKnockoutTeam(eventTeam, context);
+  const projectedTeam = actualTeam ?? resolveProjectedSlotTeam(slot, context);
+  if (!projectedTeam) return null;
+
+  const path = getProjectedPathForTeam(projectedTeam, context.groupSlots) ?? slot.path;
+  const team = asKnockoutTeam(projectedTeam, path, renderSeedLabel(projectedTeam.group, path));
+
+  if (team.path === 'thirdPlace') {
+    context.assignedThirdPlaceKeys.add(team.key);
+  }
+
+  return team;
+}
+
+function resolveActualKnockoutTeam(eventTeam, context) {
+  if (!eventTeam) return null;
+
+  return context.teamByKey.get(normalizeTeamName(eventTeam.name)) ?? null;
+}
+
+function resolveProjectedSlotTeam(slot, context) {
+  if (slot.path === 'thirdPlace') {
+    return selectProjectedThirdPlaceTeam(slot.groups, context);
+  }
+
+  return context.groupSlots.get(slot.group)?.[slot.path] ?? null;
+}
+
+function selectProjectedThirdPlaceTeam(groups, context) {
+  return (
+    context.thirdPlaceTeams.find(
+      (team) => groups.includes(team.group) && !context.assignedThirdPlaceKeys.has(team.key),
+    ) ?? null
+  );
+}
+
+function getProjectedPathForTeam(team, groupSlots) {
+  const slots = groupSlots.get(team.group);
+  if (!slots) return '';
+
+  return Object.entries(slots).find(([, slotTeam]) => slotTeam?.key === team.key)?.[0] ?? '';
+}
+
+function renderSeedLabel(group, path) {
+  if (path === 'groupWinner') return `Group ${group} winner`;
+  if (path === 'runnerUp') return `Group ${group} runner-up`;
+  if (path === 'thirdPlace') return `Group ${group} third`;
+  return `Group ${group}`;
+}
+
+function getKnockoutEvents(stageSlug) {
+  return state.events
+    .filter((event) => event.stageSlug === stageSlug)
+    .sort((a, b) => a.date - b.date || Number(a.id) - Number(b.id));
 }
 
 function calculateProjectedGroupStandings() {
