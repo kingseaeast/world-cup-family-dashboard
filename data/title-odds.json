@@ -2,7 +2,7 @@
   "source": "Kalshi KXMENWORLDCUP markets",
   "sourceUrl": "https://kalshi.com/markets/kxmenworldcup",
   "apiUrl": "https://external-api.kalshi.com/trade-api/v2/markets?series_ticker=KXMENWORLDCUP&limit=1000",
-  "updatedAt": "2026-06-25T14:31:14.46547Z",
+  "updatedAt": "2026-06-26T14:35:36.255031Z",
   "teams": [
     {
       "team": "Czechia",
@@ -13,7 +13,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.01,
-      "updatedAt": "2026-06-25T14:31:14.46547Z"
+      "updatedAt": "2026-06-26T14:35:36.255031Z"
     },
     {
       "team": "Haiti",
@@ -24,7 +24,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-06-24T16:17:23.141343Z"
+      "updatedAt": "2026-06-26T14:35:36.243109Z"
     },
     {
       "team": "Jordan",
@@ -35,7 +35,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-06-24T16:17:23.141343Z"
+      "updatedAt": "2026-06-26T14:35:36.230145Z"
     },
     {
       "team": "Panama",
@@ -46,7 +46,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-06-24T16:17:23.141343Z"
+      "updatedAt": "2026-06-26T14:35:36.250157Z"
     },
     {
       "team": "Qatar",
@@ -57,7 +57,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-06-25T14:31:14.46547Z"
+      "updatedAt": "2026-06-26T14:35:36.235179Z"
     },
     {
       "team": "Tunisia",
@@ -68,7 +68,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-06-24T16:17:23.141343Z"
+      "updatedAt": "2026-06-26T14:35:36.225409Z"
     },
     {
       "team": "Turkey",
@@ -79,172 +79,172 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-06-24T16:17:23.141343Z"
+      "updatedAt": "2026-06-26T14:35:36.219386Z"
     },
     {
       "team": "France",
       "vendor": "Kalshi",
       "market": "Will the France win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-FR",
-      "probability": 0.1935,
-      "yesBid": 0.189,
-      "yesAsk": 0.198,
-      "lastPrice": 0.199,
-      "updatedAt": "2026-06-15T22:46:56.950418Z"
+      "probability": 0.2325,
+      "yesBid": 0.232,
+      "yesAsk": 0.233,
+      "lastPrice": 0.233,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Argentina",
       "vendor": "Kalshi",
       "market": "Will the Argentina win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-AR",
-      "probability": 0.1545,
-      "yesBid": 0.151,
-      "yesAsk": 0.158,
-      "lastPrice": 0.158,
-      "updatedAt": "2026-06-15T22:46:56.99902Z"
+      "probability": 0.187,
+      "yesBid": 0.186,
+      "yesAsk": 0.188,
+      "lastPrice": 0.188,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Spain",
       "vendor": "Kalshi",
       "market": "Will the Spain win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-ES",
-      "probability": 0.1335,
-      "yesBid": 0.133,
-      "yesAsk": 0.134,
-      "lastPrice": 0.133,
-      "updatedAt": "2026-06-15T22:46:56.963822Z"
+      "probability": 0.1205,
+      "yesBid": 0.12,
+      "yesAsk": 0.121,
+      "lastPrice": 0.121,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "England",
       "vendor": "Kalshi",
       "market": "Will the England win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-GB",
-      "probability": 0.0945,
-      "yesBid": 0.094,
-      "yesAsk": 0.095,
-      "lastPrice": 0.095,
-      "updatedAt": "2026-06-15T22:46:56.986349Z"
+      "probability": 0.0995,
+      "yesBid": 0.099,
+      "yesAsk": 0.1,
+      "lastPrice": 0.1,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Portugal",
       "vendor": "Kalshi",
       "market": "Will the Portugal win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-PT",
-      "probability": 0.093,
-      "yesBid": 0.09,
-      "yesAsk": 0.096,
-      "lastPrice": 0.096,
-      "updatedAt": "2026-06-15T22:46:57.024694Z"
+      "probability": 0.0965,
+      "yesBid": 0.096,
+      "yesAsk": 0.097,
+      "lastPrice": 0.097,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Netherlands",
       "vendor": "Kalshi",
       "market": "Will the Netherlands win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-NL",
-      "probability": 0.067,
-      "yesBid": 0.065,
-      "yesAsk": 0.069,
-      "lastPrice": 0.065,
-      "updatedAt": "2026-06-15T22:46:57.036236Z"
+      "probability": 0.0575,
+      "yesBid": 0.057,
+      "yesAsk": 0.058,
+      "lastPrice": 0.058,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Brazil",
       "vendor": "Kalshi",
       "market": "Will the Brazil win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-BR",
-      "probability": 0.0605,
-      "yesBid": 0.06,
-      "yesAsk": 0.061,
-      "lastPrice": 0.06,
-      "updatedAt": "2026-06-15T22:46:56.974834Z"
+      "probability": 0.0565,
+      "yesBid": 0.056,
+      "yesAsk": 0.057,
+      "lastPrice": 0.056,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Germany",
       "vendor": "Kalshi",
       "market": "Will the Germany win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-DE",
-      "probability": 0.046,
-      "yesBid": 0.045,
-      "yesAsk": 0.047,
-      "lastPrice": 0.045,
-      "updatedAt": "2026-06-15T22:46:57.011771Z"
+      "probability": 0.042499999999999996,
+      "yesBid": 0.042,
+      "yesAsk": 0.043,
+      "lastPrice": 0.043,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "USA",
       "vendor": "Kalshi",
       "market": "Will the USA win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-US",
-      "probability": 0.041,
-      "yesBid": 0.04,
-      "yesAsk": 0.042,
-      "lastPrice": 0.042,
-      "updatedAt": "2026-06-15T22:46:57.085146Z"
+      "probability": 0.0385,
+      "yesBid": 0.038,
+      "yesAsk": 0.039,
+      "lastPrice": 0.039,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Mexico",
       "vendor": "Kalshi",
       "market": "Will the Mexico win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-MX",
-      "probability": 0.028,
-      "yesBid": 0.024,
-      "yesAsk": 0.032,
-      "lastPrice": 0.024,
-      "updatedAt": "2026-06-15T22:46:57.110673Z"
+      "probability": 0.0285,
+      "yesBid": 0.028,
+      "yesAsk": 0.029,
+      "lastPrice": 0.029,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Norway",
       "vendor": "Kalshi",
       "market": "Will the Norway win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-NO",
-      "probability": 0.025,
+      "probability": 0.0245,
       "yesBid": 0.024,
-      "yesAsk": 0.026,
-      "lastPrice": 0.026,
-      "updatedAt": "2026-06-15T22:46:57.184169Z"
-    },
-    {
-      "team": "Morocco",
-      "vendor": "Kalshi",
-      "market": "Will the Morocco win the 2026 Men's World Cup?",
-      "ticker": "KXMENWORLDCUP-26-MA",
-      "probability": 0.0175,
-      "yesBid": 0.017,
-      "yesAsk": 0.018,
-      "lastPrice": 0.018,
-      "updatedAt": "2026-06-15T22:46:57.135425Z"
-    },
-    {
-      "team": "Colombia",
-      "vendor": "Kalshi",
-      "market": "Will the Colombia win the 2026 Men's World Cup?",
-      "ticker": "KXMENWORLDCUP-26-CO",
-      "probability": 0.0165,
-      "yesBid": 0.016,
-      "yesAsk": 0.017,
-      "lastPrice": 0.016,
-      "updatedAt": "2026-06-15T22:46:57.146325Z"
-    },
-    {
-      "team": "Japan",
-      "vendor": "Kalshi",
-      "market": "Will the Japan win the 2026 Men's World Cup?",
-      "ticker": "KXMENWORLDCUP-26-JP",
-      "probability": 0.013999999999999999,
-      "yesBid": 0.013,
-      "yesAsk": 0.015,
-      "lastPrice": 0.013,
-      "updatedAt": "2026-06-15T22:46:57.171831Z"
+      "yesAsk": 0.025,
+      "lastPrice": 0.025,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Belgium",
       "vendor": "Kalshi",
       "market": "Will the Belgium win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-BE",
+      "probability": 0.0165,
+      "yesBid": 0.016,
+      "yesAsk": 0.017,
+      "lastPrice": 0.017,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
+    },
+    {
+      "team": "Colombia",
+      "vendor": "Kalshi",
+      "market": "Will the Colombia win the 2026 Men's World Cup?",
+      "ticker": "KXMENWORLDCUP-26-CO",
+      "probability": 0.0155,
+      "yesBid": 0.015,
+      "yesAsk": 0.016,
+      "lastPrice": 0.016,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
+    },
+    {
+      "team": "Morocco",
+      "vendor": "Kalshi",
+      "market": "Will the Morocco win the 2026 Men's World Cup?",
+      "ticker": "KXMENWORLDCUP-26-MA",
+      "probability": 0.014499999999999999,
+      "yesBid": 0.014,
+      "yesAsk": 0.015,
+      "lastPrice": 0.015,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
+    },
+    {
+      "team": "Japan",
+      "vendor": "Kalshi",
+      "market": "Will the Japan win the 2026 Men's World Cup?",
+      "ticker": "KXMENWORLDCUP-26-JP",
       "probability": 0.010499999999999999,
       "yesBid": 0.01,
       "yesAsk": 0.011,
-      "lastPrice": 0.01,
-      "updatedAt": "2026-06-15T22:46:57.072804Z"
+      "lastPrice": 0.011,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Switzerland",
@@ -255,7 +255,18 @@
       "yesBid": 0.007,
       "yesAsk": 0.008,
       "lastPrice": 0.008,
-      "updatedAt": "2026-06-15T22:46:57.160609Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
+    },
+    {
+      "team": "Ecuador",
+      "vendor": "Kalshi",
+      "market": "Will the Ecuador win the 2026 Men's World Cup?",
+      "ticker": "KXMENWORLDCUP-26-EC",
+      "probability": 0.0055,
+      "yesBid": 0.005,
+      "yesAsk": 0.006,
+      "lastPrice": 0.006,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Bosnia and Herzegovina",
@@ -266,7 +277,7 @@
       "yesBid": 0,
       "yesAsk": 0.01,
       "lastPrice": 0.01,
-      "updatedAt": "2026-06-15T22:46:57.706879Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Congo DR",
@@ -277,18 +288,7 @@
       "yesBid": 0,
       "yesAsk": 0.01,
       "lastPrice": 0.01,
-      "updatedAt": "2026-06-15T22:46:57.71934Z"
-    },
-    {
-      "team": "Ecuador",
-      "vendor": "Kalshi",
-      "market": "Will the Ecuador win the 2026 Men's World Cup?",
-      "ticker": "KXMENWORLDCUP-26-EC",
-      "probability": 0.005,
-      "yesBid": 0.004,
-      "yesAsk": 0.006,
-      "lastPrice": 0.006,
-      "updatedAt": "2026-06-15T22:46:57.234091Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Iraq",
@@ -299,7 +299,7 @@
       "yesBid": 0,
       "yesAsk": 0.01,
       "lastPrice": 0.01,
-      "updatedAt": "2026-06-15T22:46:57.732031Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Croatia",
@@ -310,18 +310,18 @@
       "yesBid": 0.004,
       "yesAsk": 0.005,
       "lastPrice": 0.004,
-      "updatedAt": "2026-06-15T22:46:57.098853Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
-      "team": "Ivory Coast",
+      "team": "Senegal",
       "vendor": "Kalshi",
-      "market": "Will Ivory Coast win the 2026 Men's World Cup?",
-      "ticker": "KXMENWORLDCUP-26-CIV",
+      "market": "Will the Senegal win the 2026 Men's World Cup?",
+      "ticker": "KXMENWORLDCUP-26-SN",
       "probability": 0.0035,
       "yesBid": 0.003,
       "yesAsk": 0.004,
       "lastPrice": 0.004,
-      "updatedAt": "2026-06-15T22:46:57.64472Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Canada",
@@ -332,7 +332,7 @@
       "yesBid": 0.002,
       "yesAsk": 0.003,
       "lastPrice": 0.003,
-      "updatedAt": "2026-06-15T22:46:57.196131Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Egypt",
@@ -343,18 +343,18 @@
       "yesBid": 0.002,
       "yesAsk": 0.003,
       "lastPrice": 0.003,
-      "updatedAt": "2026-06-15T22:46:57.583992Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
-      "team": "Senegal",
+      "team": "Ivory Coast",
       "vendor": "Kalshi",
-      "market": "Will the Senegal win the 2026 Men's World Cup?",
-      "ticker": "KXMENWORLDCUP-26-SN",
+      "market": "Will Ivory Coast win the 2026 Men's World Cup?",
+      "ticker": "KXMENWORLDCUP-26-CIV",
       "probability": 0.0025,
       "yesBid": 0.002,
       "yesAsk": 0.003,
-      "lastPrice": 0.002,
-      "updatedAt": "2026-06-15T22:46:57.269329Z"
+      "lastPrice": 0.003,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Australia",
@@ -365,7 +365,7 @@
       "yesBid": 0.001,
       "yesAsk": 0.002,
       "lastPrice": 0.002,
-      "updatedAt": "2026-06-15T22:46:57.384922Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Austria",
@@ -375,8 +375,8 @@
       "probability": 0.0015,
       "yesBid": 0.001,
       "yesAsk": 0.002,
-      "lastPrice": 0.002,
-      "updatedAt": "2026-06-15T22:46:57.208123Z"
+      "lastPrice": 0.001,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Cape Verde",
@@ -387,18 +387,7 @@
       "yesBid": 0.001,
       "yesAsk": 0.002,
       "lastPrice": 0.002,
-      "updatedAt": "2026-06-15T22:46:57.607529Z"
-    },
-    {
-      "team": "Ghana",
-      "vendor": "Kalshi",
-      "market": "Will the Ghana win the 2026 Men's World Cup?",
-      "ticker": "KXMENWORLDCUP-26-GH",
-      "probability": 0.0015,
-      "yesBid": 0.001,
-      "yesAsk": 0.002,
-      "lastPrice": 0.002,
-      "updatedAt": "2026-06-15T22:46:57.398698Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Paraguay",
@@ -409,7 +398,7 @@
       "yesBid": 0.001,
       "yesAsk": 0.002,
       "lastPrice": 0.001,
-      "updatedAt": "2026-06-15T22:46:57.328708Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Sweden",
@@ -419,19 +408,8 @@
       "probability": 0.0015,
       "yesBid": 0.001,
       "yesAsk": 0.002,
-      "lastPrice": 0.002,
-      "updatedAt": "2026-06-15T22:46:57.219877Z"
-    },
-    {
-      "team": "Uruguay",
-      "vendor": "Kalshi",
-      "market": "Will the Uruguay win the 2026 Men's World Cup?",
-      "ticker": "KXMENWORLDCUP-26-UY",
-      "probability": 0.0015,
-      "yesBid": 0.001,
-      "yesAsk": 0.002,
-      "lastPrice": 0.002,
-      "updatedAt": "2026-06-15T22:46:57.060891Z"
+      "lastPrice": 0.001,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Algeria",
@@ -442,7 +420,7 @@
       "yesBid": 0,
       "yesAsk": 0.001,
       "lastPrice": 0.001,
-      "updatedAt": "2026-06-15T22:46:57.595849Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Curacao",
@@ -453,7 +431,18 @@
       "yesBid": 0,
       "yesAsk": 0.001,
       "lastPrice": 0.001,
-      "updatedAt": "2026-06-15T22:46:57.656735Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
+    },
+    {
+      "team": "Ghana",
+      "vendor": "Kalshi",
+      "market": "Will the Ghana win the 2026 Men's World Cup?",
+      "ticker": "KXMENWORLDCUP-26-GH",
+      "probability": 0.0005,
+      "yesBid": 0,
+      "yesAsk": 0.001,
+      "lastPrice": 0.001,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Iran",
@@ -464,7 +453,7 @@
       "yesBid": 0,
       "yesAsk": 0.001,
       "lastPrice": 0.001,
-      "updatedAt": "2026-06-15T22:46:57.447764Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "New Zealand",
@@ -475,7 +464,7 @@
       "yesBid": 0,
       "yesAsk": 0.001,
       "lastPrice": 0.001,
-      "updatedAt": "2026-06-15T22:46:57.547665Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Saudi Arabia",
@@ -486,7 +475,7 @@
       "yesBid": 0,
       "yesAsk": 0.001,
       "lastPrice": 0.001,
-      "updatedAt": "2026-06-15T22:46:57.470901Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Scotland",
@@ -497,7 +486,7 @@
       "yesBid": 0,
       "yesAsk": 0.001,
       "lastPrice": 0.001,
-      "updatedAt": "2026-06-15T22:46:57.339629Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "South Africa",
@@ -508,7 +497,7 @@
       "yesBid": 0,
       "yesAsk": 0.001,
       "lastPrice": 0.001,
-      "updatedAt": "2026-06-15T22:46:57.62089Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "South Korea",
@@ -519,7 +508,18 @@
       "yesBid": 0,
       "yesAsk": 0.001,
       "lastPrice": 0.001,
-      "updatedAt": "2026-06-15T22:46:57.28272Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
+    },
+    {
+      "team": "Uruguay",
+      "vendor": "Kalshi",
+      "market": "Will the Uruguay win the 2026 Men's World Cup?",
+      "ticker": "KXMENWORLDCUP-26-UY",
+      "probability": 0.0005,
+      "yesBid": 0,
+      "yesAsk": 0.001,
+      "lastPrice": 0.001,
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     },
     {
       "team": "Uzbekistan",
@@ -530,7 +530,7 @@
       "yesBid": 0,
       "yesAsk": 0.001,
       "lastPrice": 0.001,
-      "updatedAt": "2026-06-15T22:46:57.559691Z"
+      "updatedAt": "2026-06-26T14:35:36.106856Z"
     }
   ]
 }
