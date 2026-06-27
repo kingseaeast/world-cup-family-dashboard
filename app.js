@@ -570,6 +570,9 @@ function buildKnockoutMatchFromEvent(event, round, index, teamRecords) {
 
   return {
     id: `${round.label} ${index + 1}`,
+    date: event.date,
+    venue: event.venue,
+    city: event.city,
     teams,
     winnerKey: event.completed ? getEventWinnerKey(event) : '',
   };
@@ -615,6 +618,10 @@ function renderBracketMatch(match, roundKey) {
   return `
     <article class="bracket-match ${isFinal ? 'bracket-match-final' : ''}">
       <div class="bracket-match-label">${match.id.replaceAll('-', ' ')}</div>
+      <div class="bracket-match-meta">
+        <span>${formatEventTime(match.date)} PT</span>
+        <span>${match.venue}${match.city ? ` · ${match.city}` : ''}</span>
+      </div>
       <div class="bracket-teams">
         ${match.teams.map((team) => renderBracketTeam(team, match.winnerKey)).join('')}
       </div>
