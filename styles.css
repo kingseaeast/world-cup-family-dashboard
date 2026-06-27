@@ -710,9 +710,22 @@ details[open] .when-open {
   background: rgba(74, 222, 128, 0.1);
 }
 
-.bracket-team-empty {
-  grid-template-columns: 1fr;
+.bracket-team-open {
+  grid-template-columns: 32px minmax(0, 1fr);
   color: var(--muted);
+}
+
+.bracket-open-mark {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px dashed rgba(148, 163, 184, 0.32);
+  border-radius: 999px;
+  color: rgba(229, 238, 251, 0.72);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
 }
 
 .bracket-team-logo {
@@ -777,14 +790,6 @@ details[open] .when-open {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.bracket-champion {
-  padding: 9px 10px;
-  border-radius: 12px;
-  background: rgba(251, 191, 36, 0.12);
-  color: #fde68a;
-  font-size: 0.84rem;
 }
 
 .team-standings-table th,
