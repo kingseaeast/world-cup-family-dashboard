@@ -2,7 +2,7 @@
   "source": "Kalshi KXMENWORLDCUP markets",
   "sourceUrl": "https://kalshi.com/markets/kxmenworldcup",
   "apiUrl": "https://external-api.kalshi.com/trade-api/v2/markets?series_ticker=KXMENWORLDCUP&limit=1000",
-  "updatedAt": "2026-07-07T23:15:54.824034Z",
+  "updatedAt": "2026-07-09T22:25:51.216812Z",
   "teams": [
     {
       "team": "Algeria",
@@ -258,6 +258,17 @@
       "updatedAt": "2026-07-06T15:18:29.562571Z"
     },
     {
+      "team": "Morocco",
+      "vendor": "Kalshi",
+      "market": "Will the Morocco win the 2026 Men's World Cup?",
+      "ticker": "KXMENWORLDCUP-26-MA",
+      "probability": 0.5,
+      "yesBid": 0,
+      "yesAsk": 1,
+      "lastPrice": 0.001,
+      "updatedAt": "2026-07-09T22:25:51.216812Z"
+    },
+    {
       "team": "Netherlands",
       "vendor": "Kalshi",
       "market": "Will the Netherlands win the 2026 Men's World Cup?",
@@ -449,10 +460,10 @@
       "vendor": "Kalshi",
       "market": "Will the France win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-FR",
-      "probability": 0.3305,
-      "yesBid": 0.329,
-      "yesAsk": 0.332,
-      "lastPrice": 0.332,
+      "probability": 0.4005,
+      "yesBid": 0.4,
+      "yesAsk": 0.401,
+      "lastPrice": 0.401,
       "updatedAt": "2026-07-06T15:18:28.458787Z"
     },
     {
@@ -460,10 +471,10 @@
       "vendor": "Kalshi",
       "market": "Will the Argentina win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-AR",
-      "probability": 0.1915,
-      "yesBid": 0.191,
-      "yesAsk": 0.192,
-      "lastPrice": 0.192,
+      "probability": 0.183,
+      "yesBid": 0.178,
+      "yesAsk": 0.188,
+      "lastPrice": 0.188,
       "updatedAt": "2026-07-06T15:18:28.792436Z"
     },
     {
@@ -471,10 +482,10 @@
       "vendor": "Kalshi",
       "market": "Will the Spain win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-ES",
-      "probability": 0.1875,
-      "yesBid": 0.187,
-      "yesAsk": 0.188,
-      "lastPrice": 0.187,
+      "probability": 0.17099999999999999,
+      "yesBid": 0.169,
+      "yesAsk": 0.173,
+      "lastPrice": 0.173,
       "updatedAt": "2026-07-06T15:18:28.659985Z"
     },
     {
@@ -482,10 +493,10 @@
       "vendor": "Kalshi",
       "market": "Will the England win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-GB",
-      "probability": 0.1565,
-      "yesBid": 0.156,
-      "yesAsk": 0.157,
-      "lastPrice": 0.157,
+      "probability": 0.1585,
+      "yesBid": 0.158,
+      "yesAsk": 0.159,
+      "lastPrice": 0.158,
       "updatedAt": "2026-07-06T15:18:28.713748Z"
     },
     {
@@ -493,32 +504,21 @@
       "vendor": "Kalshi",
       "market": "Will the Norway win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-NO",
-      "probability": 0.0655,
-      "yesBid": 0.065,
-      "yesAsk": 0.066,
-      "lastPrice": 0.066,
+      "probability": 0.062,
+      "yesBid": 0.06,
+      "yesAsk": 0.064,
+      "lastPrice": 0.064,
       "updatedAt": "2026-07-06T15:18:30.049934Z"
-    },
-    {
-      "team": "Morocco",
-      "vendor": "Kalshi",
-      "market": "Will the Morocco win the 2026 Men's World Cup?",
-      "ticker": "KXMENWORLDCUP-26-MA",
-      "probability": 0.0315,
-      "yesBid": 0.031,
-      "yesAsk": 0.032,
-      "lastPrice": 0.032,
-      "updatedAt": "2026-07-06T15:18:29.718947Z"
     },
     {
       "team": "Belgium",
       "vendor": "Kalshi",
       "market": "Will the Belgium win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-BE",
-      "probability": 0.0245,
-      "yesBid": 0.024,
-      "yesAsk": 0.025,
-      "lastPrice": 0.024,
+      "probability": 0.0215,
+      "yesBid": 0.021,
+      "yesAsk": 0.022,
+      "lastPrice": 0.022,
       "updatedAt": "2026-07-06T15:18:29.321766Z"
     },
     {
@@ -526,10 +526,10 @@
       "vendor": "Kalshi",
       "market": "Will the Switzerland win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-CH",
-      "probability": 0.0215,
-      "yesBid": 0.021,
-      "yesAsk": 0.022,
-      "lastPrice": 0.022,
+      "probability": 0.0185,
+      "yesBid": 0.018,
+      "yesAsk": 0.019,
+      "lastPrice": 0.018,
       "updatedAt": "2026-07-06T15:18:29.888762Z"
     }
   ]
