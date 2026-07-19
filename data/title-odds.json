@@ -9,9 +9,9 @@
       "vendor": "Kalshi",
       "market": "Will the Spain win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-ES",
-      "probability": 0.59,
+      "probability": 0.5914999999999999,
       "yesBid": 0.59,
-      "yesAsk": 0.59,
+      "yesAsk": 0.593,
       "lastPrice": 0.593,
       "updatedAt": "2026-07-17T14:30:41.903484Z"
     },
@@ -526,10 +526,10 @@
       "vendor": "Kalshi",
       "market": "Will the Argentina win the 2026 Men's World Cup?",
       "ticker": "KXMENWORLDCUP-26-AR",
-      "probability": 0.415,
-      "yesBid": 0.413,
-      "yesAsk": 0.417,
-      "lastPrice": 0.417,
+      "probability": 0.4145,
+      "yesBid": 0.41,
+      "yesAsk": 0.419,
+      "lastPrice": 0.419,
       "updatedAt": "2026-07-17T14:30:41.903484Z"
     }
   ]
