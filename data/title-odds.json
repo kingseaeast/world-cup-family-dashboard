@@ -2,7 +2,7 @@
   "source": "Kalshi KXMENWORLDCUP markets",
   "sourceUrl": "https://kalshi.com/markets/kxmenworldcup",
   "apiUrl": "https://external-api.kalshi.com/trade-api/v2/markets?series_ticker=KXMENWORLDCUP&limit=1000",
-  "updatedAt": "2026-07-19T22:09:42.803261Z",
+  "updatedAt": "2026-07-20T16:19:06.981333Z",
   "teams": [
     {
       "team": "Algeria",
@@ -13,7 +13,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:05.543832Z"
     },
     {
       "team": "Argentina",
@@ -24,7 +24,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-19T22:09:42.803261Z"
+      "updatedAt": "2026-07-20T16:18:58.370614Z"
     },
     {
       "team": "Australia",
@@ -35,7 +35,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:03.080255Z"
     },
     {
       "team": "Austria",
@@ -46,7 +46,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:00.736377Z"
     },
     {
       "team": "Belgium",
@@ -57,7 +57,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:18:59.197566Z"
     },
     {
       "team": "Bosnia and Herzegovina",
@@ -68,7 +68,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.01,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:06.722071Z"
     },
     {
       "team": "Brazil",
@@ -79,7 +79,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:18:58.110294Z"
     },
     {
       "team": "Canada",
@@ -90,7 +90,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:00.597898Z"
     },
     {
       "team": "Cape Verde",
@@ -101,7 +101,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:05.687581Z"
     },
     {
       "team": "Colombia",
@@ -112,7 +112,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:00.049002Z"
     },
     {
       "team": "Congo DR",
@@ -123,7 +123,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.01,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:06.849936Z"
     },
     {
       "team": "Croatia",
@@ -134,7 +134,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:18:59.481227Z"
     },
     {
       "team": "Curacao",
@@ -145,7 +145,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:06.197981Z"
     },
     {
       "team": "Czechia",
@@ -156,7 +156,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.01,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:06.579483Z"
     },
     {
       "team": "Ecuador",
@@ -167,7 +167,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:01.005765Z"
     },
     {
       "team": "Egypt",
@@ -178,7 +178,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:05.416922Z"
     },
     {
       "team": "England",
@@ -189,7 +189,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:18:58.237872Z"
     },
     {
       "team": "France",
@@ -200,7 +200,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:18:57.85814Z"
     },
     {
       "team": "Germany",
@@ -211,7 +211,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:18:58.504344Z"
     },
     {
       "team": "Ghana",
@@ -222,7 +222,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:03.208817Z"
     },
     {
       "team": "Haiti",
@@ -233,7 +233,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:06.326499Z"
     },
     {
       "team": "Iran",
@@ -244,7 +244,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:03.745941Z"
     },
     {
       "team": "Iraq",
@@ -255,7 +255,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.01,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:06.981333Z"
     },
     {
       "team": "Ivory Coast",
@@ -266,7 +266,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:06.079168Z"
     },
     {
       "team": "Japan",
@@ -277,7 +277,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:00.339509Z"
     },
     {
       "team": "Jordan",
@@ -288,7 +288,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:05.219664Z"
     },
     {
       "team": "Mexico",
@@ -299,7 +299,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:18:59.638203Z"
     },
     {
       "team": "Morocco",
@@ -310,7 +310,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:18:59.914111Z"
     },
     {
       "team": "Netherlands",
@@ -321,7 +321,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:18:58.78805Z"
     },
     {
       "team": "New Zealand",
@@ -332,7 +332,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:04.942654Z"
     },
     {
       "team": "Norway",
@@ -343,7 +343,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:00.466486Z"
     },
     {
       "team": "Panama",
@@ -354,7 +354,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:06.455411Z"
     },
     {
       "team": "Paraguay",
@@ -365,7 +365,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:02.141712Z"
     },
     {
       "team": "Portugal",
@@ -376,7 +376,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:18:58.662842Z"
     },
     {
       "team": "Qatar",
@@ -387,7 +387,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:05.952132Z"
     },
     {
       "team": "Saudi Arabia",
@@ -398,7 +398,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:04.006833Z"
     },
     {
       "team": "Scotland",
@@ -409,7 +409,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:02.272349Z"
     },
     {
       "team": "Senegal",
@@ -420,7 +420,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:01.404144Z"
     },
     {
       "team": "South Africa",
@@ -431,7 +431,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:05.815772Z"
     },
     {
       "team": "South Korea",
@@ -442,7 +442,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:01.559684Z"
     },
     {
       "team": "Spain",
@@ -453,7 +453,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.999,
-      "updatedAt": "2026-07-19T22:09:42.803261Z"
+      "updatedAt": "2026-07-20T16:18:57.985888Z"
     },
     {
       "team": "Sweden",
@@ -464,7 +464,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:00.873206Z"
     },
     {
       "team": "Switzerland",
@@ -475,7 +475,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:00.212065Z"
     },
     {
       "team": "Tunisia",
@@ -486,7 +486,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:04.288157Z"
     },
     {
       "team": "Turkey",
@@ -497,7 +497,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:01.714261Z"
     },
     {
       "team": "Uruguay",
@@ -508,7 +508,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:18:59.054191Z"
     },
     {
       "team": "USA",
@@ -519,7 +519,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:18:59.346626Z"
     },
     {
       "team": "Uzbekistan",
@@ -530,7 +530,7 @@
       "yesBid": 0,
       "yesAsk": 1,
       "lastPrice": 0.001,
-      "updatedAt": "2026-07-17T14:30:41.903484Z"
+      "updatedAt": "2026-07-20T16:19:05.076053Z"
     }
   ]
 }
